@@ -11,7 +11,6 @@ public class Server {
         this.PORT = port;
         try {
             server = new ServerSocket(this.PORT);
-            System.out.println("Server Listening in port " + this.PORT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -20,13 +19,13 @@ public class Server {
     public Server() {
         try {
             server = new ServerSocket(this.PORT);
-            System.out.println("Server Listening on port " + this.PORT);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
     public void listen() {
+        System.out.println("Server Listening on port " + this.PORT);
         while (true) {
             try {
                 Socket clientConnected = server.accept();
