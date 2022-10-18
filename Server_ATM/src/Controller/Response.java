@@ -8,6 +8,8 @@ public class Response implements Serializable {
     private String message;
     private boolean error;
     private boolean ok;
+    private int id;
+    private String name;
 
     public Response(double balance, String message, boolean error, boolean ok) {
         this.balance = balance;
@@ -16,10 +18,58 @@ public class Response implements Serializable {
         this.ok = ok;
     }
 
+    public Response(String message, boolean error, boolean ok, int id, String name) {
+        this.message = message;
+        this.error = error;
+        this.ok = ok;
+        this.id = id;
+        this.name = name;
+    }
+
+    public Response(double balance, String message, boolean error, boolean ok, int id, String name) {
+        this.balance = balance;
+        this.message = message;
+        this.error = error;
+        this.ok = ok;
+        this.id = id;
+        this.name = name;
+    }
+
+    public Response(String message, boolean error, boolean ok, String name) {
+        this.message = message;
+        this.error = error;
+        this.ok = ok;
+        this.name = name;
+    }
+
+    public Response(double balance, String message, boolean error, boolean ok, String name) {
+        this.balance = balance;
+        this.message = message;
+        this.error = error;
+        this.ok = ok;
+        this.name = name;
+    }
+
     public Response(String message, boolean error, boolean ok) {
         this.message = message;
         this.error = error;
         this.ok = ok;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getBalance() {

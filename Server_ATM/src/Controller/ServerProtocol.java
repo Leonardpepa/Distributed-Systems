@@ -30,9 +30,12 @@ public class ServerProtocol {
     }
 
     private Response proccessAuth() {
-        boolean authSuccess = service.auth(request.getId(), request.getPin());
-        Response response = new Response("Auth", !authSuccess, authSuccess);
-        return response;
+        Account acc = service.auth(request.getId(), request.getPin());
+        if(acc == null){
+            return new Response("Auth", true, false);
+        }else{
+            return new Response("Auth", false, true, acc.getId(), acc.getName());
+        }
     }
 
     private  Response createAcc(){
@@ -47,6 +50,7 @@ public class ServerProtocol {
         double amountToDeposit = request.getBalance();
         Account account = service.read(request.getId());
         account.setBalance(account.getBalance() + amountToDeposit);
+        System.out.println(amountToDeposit);
         account = service.update(account);
 
         if (account == null) {
@@ -73,6 +77,6 @@ public class ServerProtocol {
             return new Response("Something went wrong", true, false);
 
         }
-        return new Response("Check balance", false, true);
+        return new Response("Your balance is: " + account.getBalance(), false, true);
     }
 }

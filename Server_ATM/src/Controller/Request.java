@@ -25,7 +25,17 @@ public class Request implements Serializable {
         this.pin = pin;
     }
 
-    // deposit, withdraw, check
+    public Request(RequestType type, int id, double balance) {
+        this.type = type;
+        this.id = id;
+        this.balance = balance;
+    }
+    public Request(RequestType type, int id) {
+        this.type = type;
+        this.id = id;
+    }
+
+    // deposit, withdraw
     public Request(RequestType type, double balance) {
         this.type = type;
         this.balance = balance;

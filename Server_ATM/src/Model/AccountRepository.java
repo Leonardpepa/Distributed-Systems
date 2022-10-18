@@ -15,13 +15,16 @@ public class AccountRepository implements CRUDRepository<Account> {
         this.table = table;
     }
 
-    public Boolean auth(int id, int pin) {
+    public Account auth(int id, int pin) {
         try {
             PreparedStatement authStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ? and pin = ? ");
             authStmt.setInt(1, id);
             authStmt.setInt(2, pin);
             ResultSet res = authStmt.executeQuery();
-            return res.next();
+            if(res.next()){
+                return MyUtils.decerializeAcc(res);
+            }
+            return null;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

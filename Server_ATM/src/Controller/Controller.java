@@ -39,16 +39,16 @@ public class Controller extends Thread {
                 ServerProtocol serverProtocol = new ServerProtocol(request, repository);
                 output.writeObject(serverProtocol.proccessRequest());
             } catch (IOException e) {
-                e.printStackTrace();
-//                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+//                e.printStackTrace();
+                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
                 return;
             } catch (ClassNotFoundException e) {
-//                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
-                e.printStackTrace();
+                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+//                e.printStackTrace();
                 return;
             } catch (NullPointerException e) {
-//                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
-                e.printStackTrace();
+                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+//                e.printStackTrace();
                 return;
             }
         }
