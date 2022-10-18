@@ -1,24 +1,30 @@
 package Controller;
 
-import java.io.DataInputStream;
-import java.io.DataOutput;
-import java.io.DataOutputStream;
+import Model.AccountRepository;
+import Model.DatabaseConnector;
+
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class Controller extends Thread {
 
     private final Socket clientSocket;
-    private final DataInputStream input;
-    private final DataOutput output;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
 
-    private int id = -1;
+    private final int id = -1;
+    private final DatabaseConnector connector;
+    private final AccountRepository repository;
 
     public Controller(Socket socket) {
         this.clientSocket = socket;
         try {
-            this.input = new DataInputStream(socket.getInputStream());
-            this.output = new DataOutputStream(socket.getOutputStream());
+            this.input = new ObjectInputStream(socket.getInputStream());
+            this.output = new ObjectOutputStream(socket.getOutputStream());
+            connector = new DatabaseConnector("bank");
+            repository = new AccountRepository(connector.getDbConnection(), "account");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -28,13 +34,15 @@ public class Controller extends Thread {
     @Override
     public synchronized void start() {
         super.start();
-        while(true){
+        while (true) {
             try {
-                output.writeBoolean(input.readUTF().equalsIgnoreCase("1"));
+                Request request = (Request) input.readObject();
+                ServerProtocol serverProtocol = new ServerProtocol(request, repository);
+                serverProtocol.proccessRequest();
             } catch (IOException e) {
-                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
-                return;
-//                throw new RuntimeException(e);
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
             }
         }
     }

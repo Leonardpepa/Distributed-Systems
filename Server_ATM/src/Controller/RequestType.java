@@ -1,6 +1,8 @@
 package Controller;
 
-public enum RequestType {
+import java.io.Serializable;
+
+public enum RequestType implements Serializable {
     Auth,
     deposit,
     withdraw,
