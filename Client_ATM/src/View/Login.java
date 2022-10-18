@@ -65,7 +65,7 @@ public class Login extends JFrame {
                         output.writeObject(request);
                         Response response = (Response) input.readObject();
                         if(response.isOk()){
-
+                            new HomeWindow(clientSocket, input, output, response.getId(), response.getName());
                         }else{
                             JOptionPane.showMessageDialog(null, "Wrong credencials");
                         }
