@@ -62,8 +62,24 @@ public class Register extends JFrame{
                     int id = Integer.parseInt(id_string);
                     int pin = Integer.parseInt(pin_string);
 
-                }catch (NumberFormatException ex){
+                    Request request = new Request(RequestType.createAccount, id, pin, 0, name);
+                    try {
+                        output.writeObject(request);
+                        Response response = (Response) input.readObject();
+                        if (response.isOk()){
+                            JOptionPane.showMessageDialog(null, "Account created successfuly");
+                        }else{
+                            JOptionPane.showMessageDialog(null, "There was an error creating the account");
+                        }
+                        dispose();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (ClassNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
+                }catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Something went wrong");
                 }
             }
         });

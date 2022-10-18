@@ -6,5 +6,6 @@ public enum RequestType implements Serializable {
     Auth,
     deposit,
     withdraw,
-    checkBalance
+    checkBalance,
+    createAccount
 }
