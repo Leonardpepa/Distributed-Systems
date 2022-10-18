@@ -1,3 +1,5 @@
+package Controller;
+
 import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
@@ -26,23 +28,14 @@ public class Controller extends Thread {
     @Override
     public synchronized void start() {
         super.start();
-        while (true) {
+        while(true){
             try {
-                int id = Integer.parseInt(input.readUTF());
-                boolean exists = DummyData.listOFIDS.contains(id);
-                if (exists){
-                    this.id = id;
-                }
-                output.writeBoolean(exists);
-
+                output.writeBoolean(input.readUTF().equalsIgnoreCase("1"));
             } catch (IOException e) {
-//                throw new RuntimeException(e);
                 System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
                 return;
-            } catch (NumberFormatException nf) {
-                nf.printStackTrace();
+//                throw new RuntimeException(e);
             }
-
         }
     }
 }
