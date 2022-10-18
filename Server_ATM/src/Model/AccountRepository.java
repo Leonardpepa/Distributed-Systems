@@ -15,8 +15,27 @@ public class AccountRepository implements CRUDRepository<Account> {
         this.table = table;
     }
 
+    public Boolean auth(int id, int pin) {
+        try {
+            PreparedStatement authStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ? and pin = ? ");
+            authStmt.setInt(1, id);
+            authStmt.setInt(2, pin);
+            ResultSet res = authStmt.executeQuery();
+            return res.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     @Override
     public Account create(Account object) {
+        Account found = read(object.getId());
+
+        if (found != null) {
+            System.out.println("Account already exists");
+            return null;
+        }
         try {
             PreparedStatement createStmt = conn.prepareStatement("INSERT INTO " + this.table + " values(?, ?, ?, 0)");
             createStmt.setInt(1, object.getId());
@@ -67,7 +86,7 @@ public class AccountRepository implements CRUDRepository<Account> {
             updateStmt.setDouble(3, object.getBalance());
             updateStmt.setInt(4, found.getId());
 
-            if(updateStmt.executeUpdate() == 0){
+            if (updateStmt.executeUpdate() == 0) {
                 System.out.println("Error something went wrong with update");
                 return null;
             }
@@ -89,10 +108,10 @@ public class AccountRepository implements CRUDRepository<Account> {
         }
 
         try {
-            PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM "+ this.table +" WHERE id = ?;");
+            PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM " + this.table + " WHERE id = ?;");
             deleteStmt.setInt(1, found.getId());
 
-            if(deleteStmt.executeUpdate() == 0){
+            if (deleteStmt.executeUpdate() == 0) {
                 System.out.println("Error while deleting account");
             }
 

@@ -38,7 +38,7 @@ public class Controller extends Thread {
             try {
                 Request request = (Request) input.readObject();
                 ServerProtocol serverProtocol = new ServerProtocol(request, repository);
-                serverProtocol.proccessRequest();
+                output.writeObject(serverProtocol.proccessRequest());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             } catch (ClassNotFoundException e) {

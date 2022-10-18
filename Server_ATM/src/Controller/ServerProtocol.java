@@ -2,33 +2,32 @@ package Controller;
 
 import Model.AccountRepository;
 
-import java.sql.Connection;
-
 public class ServerProtocol {
-    private Request request;
-    private AccountRepository service;
+    private final Request request;
+    private final AccountRepository service;
 
-    public ServerProtocol(Request request, AccountRepository service){
+    public ServerProtocol(Request request, AccountRepository service) {
         this.request = request;
         this.service = service;
     }
 
-    public void proccessRequest(){
-
-    }
-    private void proccessAuth(){
-
+    public Response proccessRequest() {
+        return null;
     }
 
-    private void proccessDeposit(){
+    private void proccessAuth() {
 
     }
 
-    private void proccessWithdraw(){
+    private void proccessDeposit() {
 
     }
 
-    private void proccessCheckBalance(){
+    private void proccessWithdraw() {
+
+    }
+
+    private void proccessCheckBalance() {
 
     }
 }
