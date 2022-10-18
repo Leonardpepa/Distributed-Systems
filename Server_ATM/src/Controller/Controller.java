@@ -37,7 +37,8 @@ public class Controller extends Thread {
             try {
                 Request request = (Request) input.readObject();
                 ServerProtocol serverProtocol = new ServerProtocol(request, repository);
-                output.writeObject(serverProtocol.proccessRequest());
+                Response response = serverProtocol.proccessRequest();
+                output.writeObject(response);
             } catch (IOException e) {
 //                e.printStackTrace();
                 System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
