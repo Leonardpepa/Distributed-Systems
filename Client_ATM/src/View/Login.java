@@ -40,7 +40,9 @@ public class Login extends JFrame {
             this.output = clientOutputStream;
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(null, "Server is not responding");
+            return;
         }
 
         setUpGUI();
