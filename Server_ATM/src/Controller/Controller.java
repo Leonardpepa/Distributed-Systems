@@ -10,13 +10,12 @@ import java.net.Socket;
 
 public class Controller extends Thread {
 
-    private final Socket clientSocket;
-    private final ObjectInputStream input;
-    private final ObjectOutputStream output;
-
     private final int id = -1;
-    private final DatabaseConnector connector;
-    private final AccountRepository repository;
+    private Socket clientSocket = null;
+    private ObjectInputStream input = null;
+    private ObjectOutputStream output = null;
+    private DatabaseConnector connector = null;
+    private AccountRepository repository = null;
 
     public Controller(Socket socket) {
         this.clientSocket = socket;
@@ -40,9 +39,17 @@ public class Controller extends Thread {
                 ServerProtocol serverProtocol = new ServerProtocol(request, repository);
                 output.writeObject(serverProtocol.proccessRequest());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
+//                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+                return;
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+//                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+                e.printStackTrace();
+                return;
+            } catch (NullPointerException e) {
+//                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+                e.printStackTrace();
+                return;
             }
         }
     }

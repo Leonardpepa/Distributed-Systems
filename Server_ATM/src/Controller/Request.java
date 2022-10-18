@@ -8,6 +8,8 @@ public class Request implements Serializable {
     private int pin;
     private double balance;
 
+    private String name;
+
     // general
     public Request(RequestType type, int id, int pin, double balance) {
         this.type = type;
@@ -27,6 +29,22 @@ public class Request implements Serializable {
     public Request(RequestType type, double balance) {
         this.type = type;
         this.balance = balance;
+    }
+
+    public Request(RequestType type, int id, int pin, double balance, String name) {
+        this.type = type;
+        this.id = id;
+        this.pin = pin;
+        this.balance = balance;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public RequestType getType() {

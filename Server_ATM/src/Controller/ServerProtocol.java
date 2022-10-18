@@ -16,6 +16,8 @@ public class ServerProtocol {
         switch (request.getType()) {
             case Auth:
                 return proccessAuth();
+            case createAccount:
+                return createAcc();
             case deposit:
                 return proccessDeposit();
             case withdraw:
@@ -33,16 +35,24 @@ public class ServerProtocol {
         return response;
     }
 
+    private  Response createAcc(){
+        Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
+        if (service.create(account) == null){
+            return new Response("Account didn't created", true, false);
+        }
+        return new Response("Account Created", false, true);
+    }
+
     private Response proccessDeposit() {
         double amountToDeposit = request.getBalance();
         Account account = service.read(request.getId());
         account.setBalance(account.getBalance() + amountToDeposit);
         account = service.update(account);
 
-        if (account != null) {
-            return new Response("Deposit Succeed", false, true);
+        if (account == null) {
+            return new Response("Deposit Failed", true, false);
         }
-        return new Response("Deposit Failed", true, false);
+        return new Response("Deposit Succeed", false, true);
     }
 
     private Response proccessWithdraw() {
