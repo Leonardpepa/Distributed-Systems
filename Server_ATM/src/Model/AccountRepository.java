@@ -9,19 +9,36 @@ import java.sql.SQLException;
 public class AccountRepository implements CRUDRepository<Account> {
     private final Connection conn;
     private final String table;
+    private final PreparedStatement authStmt;
+    private final PreparedStatement createStmt;
+
+    private final PreparedStatement readStmt;
+
+    private final PreparedStatement updateStmt;
+
+    private final PreparedStatement deleteStmt;
 
     public AccountRepository(Connection conn, String table) {
         this.conn = conn;
         this.table = table;
+        try {
+            authStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ? and pin = ? ");
+            createStmt = conn.prepareStatement("INSERT INTO " + this.table + " values(?, ?, ?, 0)");
+            readStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ?");
+            updateStmt = conn.prepareStatement("UPDATE " + this.table + " SET pin = ? , name = ? , balance = ? WHERE id = ? ");
+            deleteStmt = conn.prepareStatement("DELETE FROM " + this.table + " WHERE id = ?;");
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Account auth(int id, int pin) {
         try {
-            PreparedStatement authStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ? and pin = ? ");
+            authStmt.clearParameters();
             authStmt.setInt(1, id);
             authStmt.setInt(2, pin);
             ResultSet res = authStmt.executeQuery();
-            if(res.next()){
+            if (res.next()) {
                 return MyUtils.decerializeAcc(res);
             }
             return null;
@@ -40,7 +57,7 @@ public class AccountRepository implements CRUDRepository<Account> {
             return null;
         }
         try {
-            PreparedStatement createStmt = conn.prepareStatement("INSERT INTO " + this.table + " values(?, ?, ?, 0)");
+            createStmt.clearParameters();
             createStmt.setInt(1, object.getId());
             createStmt.setInt(2, object.getPin());
             createStmt.setString(3, object.getName());
@@ -58,7 +75,7 @@ public class AccountRepository implements CRUDRepository<Account> {
     @Override
     public Account read(int id) {
         try {
-            PreparedStatement readStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ?");
+            readStmt.clearParameters();
             readStmt.setInt(1, id);
             ResultSet res = readStmt.executeQuery();
             if (!res.next()) {
@@ -83,7 +100,7 @@ public class AccountRepository implements CRUDRepository<Account> {
         }
 
         try {
-            PreparedStatement updateStmt = conn.prepareStatement("UPDATE " + this.table + " SET pin = ? , name = ? , balance = ? WHERE id = ? ");
+            updateStmt.clearParameters();
             updateStmt.setInt(1, object.getPin());
             updateStmt.setString(2, object.getName());
             updateStmt.setDouble(3, object.getBalance());
@@ -111,7 +128,7 @@ public class AccountRepository implements CRUDRepository<Account> {
         }
 
         try {
-            PreparedStatement deleteStmt = conn.prepareStatement("DELETE FROM " + this.table + " WHERE id = ?;");
+            deleteStmt.clearParameters();
             deleteStmt.setInt(1, found.getId());
 
             if (deleteStmt.executeUpdate() == 0) {

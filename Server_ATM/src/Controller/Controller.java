@@ -33,6 +33,7 @@ public class Controller extends Thread {
     @Override
     public void run() {
         super.run();
+        boolean errorOccurred = false;
         while (true) {
             try {
                 Request request = (Request) input.readObject();
@@ -40,17 +41,21 @@ public class Controller extends Thread {
                 Response response = serverProtocol.proccessRequest();
                 output.writeObject(response);
             } catch (IOException e) {
-                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
-                return;
+                errorOccurred = true;
+                System.out.println("IO Error:  " + e.getMessage());
             } catch (ClassNotFoundException e) {
-                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
-                return;
+                errorOccurred = true;
+                System.out.println("Class not found Error:  " + e.getMessage());
             } catch (NullPointerException e) {
-                System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
-                return;
+                errorOccurred = true;
+                System.out.println("Null Error:  " + e.getMessage());
             } finally {
                 try {
-                    clientSocket.close();
+                    if (errorOccurred) {
+                        clientSocket.close();
+                        System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
+                        return;
+                    }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
