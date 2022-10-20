@@ -84,7 +84,7 @@ public class Login extends JFrame {
         register.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new Register(clientSocket, input, output);
+                new Register(clientSocket, input, output, Login.this);
             }
         });
 

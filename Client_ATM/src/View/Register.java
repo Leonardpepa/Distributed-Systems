@@ -29,7 +29,7 @@ public class Register extends JFrame {
     private JTextField name_field;
     private JButton back;
 
-    public Register(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
+    public Register(Socket socket, ObjectInputStream input, ObjectOutputStream output, JFrame parent) {
 
         clientSocket = socket;
         ObjectOutputStream clientOutputStream = output;
@@ -37,7 +37,7 @@ public class Register extends JFrame {
         this.input = clientInputStream;
         this.output = clientOutputStream;
 
-        setUpGUI();
+        setUpGUI(parent);
 
         back.addActionListener(new ActionListener() {
             @Override
@@ -87,7 +87,7 @@ public class Register extends JFrame {
 
     }
 
-    public void setUpGUI() {
+    public void setUpGUI(JFrame parent) {
         panel = new JPanel();
         panel.setLayout(null);
         register = new JButton("Register");
@@ -116,7 +116,7 @@ public class Register extends JFrame {
         this.setSize(WIDTH, HEIGT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(parent);
     }
 
 
