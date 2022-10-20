@@ -18,18 +18,15 @@ public class AccountRepository implements CRUDRepository<Account> {
 
     private final PreparedStatement deleteStmt;
 
-    public AccountRepository(Connection conn, String table) {
+    public AccountRepository(Connection conn, String table) throws SQLException {
         this.conn = conn;
         this.table = table;
-        try {
-            authStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ? and pin = ? ");
-            createStmt = conn.prepareStatement("INSERT INTO " + this.table + " values(?, ?, ?, 0)");
-            readStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ?");
-            updateStmt = conn.prepareStatement("UPDATE " + this.table + " SET pin = ? , name = ? , balance = ? WHERE id = ? ");
-            deleteStmt = conn.prepareStatement("DELETE FROM " + this.table + " WHERE id = ?;");
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        authStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ? AND pin = ? ");
+        createStmt = conn.prepareStatement("INSERT INTO " + this.table + " values(?, ?, ?, 0)");
+        readStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ?");
+        updateStmt = conn.prepareStatement("UPDATE " + this.table + " SET pin = ? , name = ? , balance = ? WHERE id = ? ");
+        deleteStmt = conn.prepareStatement("DELETE FROM " + this.table + " WHERE id = ?;");
+
     }
 
     public Account auth(int id, int pin) {

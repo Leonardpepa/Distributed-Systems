@@ -4,56 +4,43 @@ import java.io.Serializable;
 
 public class Response implements Serializable {
 
-    private double balance;
-    private String message;
-    private boolean error;
-    private boolean ok;
     private int id;
     private String name;
+    private double balance;
 
-    public Response(double balance, String message, boolean error, boolean ok) {
-        this.balance = balance;
-        this.message = message;
-        this.error = error;
-        this.ok = ok;
+    private String message;
+    private boolean ok;
+
+    private Response() {
+
     }
 
-    public Response(String message, boolean error, boolean ok, int id, String name) {
-        this.message = message;
-        this.error = error;
-        this.ok = ok;
-        this.id = id;
-        this.name = name;
+    public static Response createCheckBalanceResponse(double balance) {
+        Response checkResponse = new Response();
+        checkResponse.setBalance(balance);
+        checkResponse.setOk(true);
+        return checkResponse;
     }
 
-    public Response(double balance, String message, boolean error, boolean ok, int id, String name) {
-        this.balance = balance;
-        this.message = message;
-        this.error = error;
-        this.ok = ok;
-        this.id = id;
-        this.name = name;
+    public static Response createAuthSuccessResponse(int id, String name) {
+        Response authSuccessResponse = new Response();
+        authSuccessResponse.setId(id);
+        authSuccessResponse.setName(name);
+        authSuccessResponse.setOk(true);
+        return authSuccessResponse;
     }
 
-    public Response(String message, boolean error, boolean ok, String name) {
-        this.message = message;
-        this.error = error;
-        this.ok = ok;
-        this.name = name;
+    public static Response createGeneralSuccessResponse() {
+        Response ok = new Response();
+        ok.setOk(true);
+        return ok;
     }
 
-    public Response(double balance, String message, boolean error, boolean ok, String name) {
-        this.balance = balance;
-        this.message = message;
-        this.error = error;
-        this.ok = ok;
-        this.name = name;
-    }
-
-    public Response(String message, boolean error, boolean ok) {
-        this.message = message;
-        this.error = error;
-        this.ok = ok;
+    public static Response createGeneralErrorResponse(String message) {
+        Response error = new Response();
+        error.setOk(false);
+        error.setMessage(message);
+        return error;
     }
 
     public int getId() {
@@ -88,14 +75,6 @@ public class Response implements Serializable {
         this.message = message;
     }
 
-    public boolean isError() {
-        return error;
-    }
-
-    public void setError(boolean error) {
-        this.error = error;
-    }
-
     public boolean isOk() {
         return ok;
     }
@@ -104,3 +83,6 @@ public class Response implements Serializable {
         this.ok = ok;
     }
 }
+
+
+

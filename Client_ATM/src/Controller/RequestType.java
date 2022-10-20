@@ -3,9 +3,10 @@ package Controller;
 import java.io.Serializable;
 
 public enum RequestType implements Serializable {
-    Auth,
+    auth,
     deposit,
     withdraw,
     checkBalance,
-    createAccount
+    register,
+    logout
 }

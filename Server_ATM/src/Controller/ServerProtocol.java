@@ -7,16 +7,19 @@ public class ServerProtocol {
     private final Request request;
     private final AccountRepository service;
 
-    public ServerProtocol(Request request, AccountRepository service) {
+    private final Controller controller;
+
+    public ServerProtocol(Request request, Controller controller) {
         this.request = request;
-        this.service = service;
+        this.controller = controller;
+        this.service = controller.getRepository();
     }
 
     public Response proccessRequest() {
         switch (request.getType()) {
-            case Auth:
+            case auth:
                 return proccessAuth();
-            case createAccount:
+            case register:
                 return createAcc();
             case deposit:
                 return proccessDeposit();
@@ -24,59 +27,65 @@ public class ServerProtocol {
                 return proccessWithdraw();
             case checkBalance:
                 return proccessCheckBalance();
+            case logout:
+                return logout();
             default:
                 throw new IllegalStateException("Unexpected value: " + request.getType());
         }
     }
 
-    private Response proccessAuth() {
-        Account acc = service.auth(request.getId(), request.getPin());
-        if(acc == null){
-            return new Response("Auth", true, false);
-        }else{
-            return new Response("Auth", false, true, acc.getId(), acc.getName());
-        }
+    private Response logout() {
+        Response response = Response.createGeneralSuccessResponse();
+        controller.setClient_id(-1);
+        return response;
     }
 
-    private  Response createAcc(){
-        Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
-        if (service.create(account) == null){
-            return new Response("Account didn't created", true, false);
+    private Response proccessAuth() {
+        Account acc = service.auth(request.getId(), request.getPin());
+        if (acc == null) {
+            return Response.createGeneralErrorResponse("Authentication failed");
         }
-        return new Response("Account Created", false, true);
+        controller.setClient_id(acc.getId());
+        return Response.createAuthSuccessResponse(acc.getId(), acc.getName());
+    }
+
+    private Response createAcc() {
+        Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
+        if (service.create(account) == null) {
+            return Response.createGeneralErrorResponse("Account creation failed");
+        }
+        return Response.createGeneralSuccessResponse();
     }
 
     private Response proccessDeposit() {
-        double amountToDeposit = request.getBalance();
+        double amountToDeposit = request.getAmount();
         Account account = service.read(request.getId());
         account.setBalance(account.getBalance() + amountToDeposit);
-        System.out.println(amountToDeposit);
         account = service.update(account);
 
         if (account == null) {
-            return new Response("Deposit Failed", true, false);
+            return Response.createGeneralErrorResponse("Deposit failed");
         }
-        return new Response("Deposit Succeed", false, true);
+        return Response.createGeneralSuccessResponse();
     }
 
     private Response proccessWithdraw() {
-        double amountToWithdraw = request.getBalance();
+        double amountToWithdraw = request.getAmount();
         Account account = service.read(request.getId());
         if (account.getBalance() - amountToWithdraw < 0) {
-            return new Response("Withdraw Failed balance is not enough ", true, false);
+            return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
         }
         account.setBalance(account.getBalance() - amountToWithdraw);
         service.update(account);
 
-        return new Response("Withdraw Succeed", false, true);
+        return Response.createGeneralSuccessResponse();
     }
 
     private Response proccessCheckBalance() {
         Account account = service.read(request.getId());
         if (account == null) {
-            return new Response("Something went wrong", true, false);
-
+            return Response.createGeneralErrorResponse("Server error");
         }
-        return new Response("Your balance is: " + account.getBalance(), false, true);
+        return Response.createCheckBalanceResponse(account.getBalance());
     }
 }
