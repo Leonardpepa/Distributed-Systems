@@ -1,7 +1,6 @@
 package View;
 
 import Controller.Request;
-import Controller.RequestType;
 import Controller.Response;
 
 import javax.swing.*;
@@ -31,10 +30,8 @@ public class Login extends JFrame {
 
         try {
             clientSocket = new Socket("localhost", 3008);
-            ObjectOutputStream clientOutputStream = new
-                    ObjectOutputStream(clientSocket.getOutputStream());
-            ObjectInputStream clientInputStream = new
-                    ObjectInputStream(clientSocket.getInputStream());
+            ObjectOutputStream clientOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream clientInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
             this.input = clientInputStream;
             this.output = clientOutputStream;
@@ -53,31 +50,31 @@ public class Login extends JFrame {
                 String id_string = id_field.getText();
                 String pin_string = pin_field.getText();
 
-                if(id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank()){
+                if (id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank()) {
                     JOptionPane.showMessageDialog(null, "Please fill all the fields");
                     return;
                 }
 
-                try{
+                try {
                     int id = Integer.parseInt(id_string);
                     int pin = Integer.parseInt(pin_string);
 
-                    Request request = new Request(RequestType.Auth, id, pin);
+                    Request request = Request.createAuthRequest(id, pin);
+
                     try {
                         output.writeObject(request);
                         Response response = (Response) input.readObject();
-                        if(response.isOk()){
+                        if (response.isOk()) {
                             new HomeWindow(clientSocket, input, output, response.getId(), response.getName());
-                        }else{
-                            JOptionPane.showMessageDialog(null, "Wrong credencials");
+                        } else {
+                            JOptionPane.showMessageDialog(null, response.getMessage());
                         }
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (ClassNotFoundException ex) {
                         throw new RuntimeException(ex);
                     }
-
-                }catch (NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Please fill all the fields");
                 }
             }

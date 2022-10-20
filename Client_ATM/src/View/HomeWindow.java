@@ -1,7 +1,6 @@
 package View;
 
 import Controller.Request;
-import Controller.RequestType;
 import Controller.Response;
 
 import javax.swing.*;
@@ -13,27 +12,26 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class HomeWindow extends JFrame{
+public class HomeWindow extends JFrame {
 
 
     private static final int WIDTH = 400;
     private static final int HEIGT = 400;
-
+    private final Socket clientSocket;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
+    private final int id;
+    private final String name;
     private JPanel panel;
     private JButton deposit;
     private JButton withdraw;
     private JButton exit;
     private JButton balance;
-    private final Socket clientSocket;
-    private final ObjectInputStream input;
-    private final ObjectOutputStream output;
-    private int id;
-    private String name;
-
     private JPanel container;
     private JPanel header;
 
     private JLabel welocme;
+
     public HomeWindow(Socket clientSocket, ObjectInputStream input, ObjectOutputStream output, int id, String name) {
         this.clientSocket = clientSocket;
         this.input = input;
@@ -45,7 +43,20 @@ public class HomeWindow extends JFrame{
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
+                Request request = Request.createLogoutReuest();
+                try {
+                    output.writeObject(request);
+                    Response response = (Response) input.readObject();
+                    if (response.isOk()) {
+                        dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "An error occurred please try again");
+                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -53,26 +64,27 @@ public class HomeWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String answer = JOptionPane.showInputDialog("Enter the amount to deposit");
-                if(answer == null){
+
+                if (answer == null) {
                     return;
                 }
-                if(answer.isEmpty() || answer.isBlank()){
-                    JOptionPane.showMessageDialog(null, "Wrong input");
+                if (answer.isEmpty() || answer.isBlank()) {
+                    JOptionPane.showMessageDialog(null, "The amount to deposit cannot be empty");
                 }
-
-                try{
+                try {
                     double amount = Double.parseDouble(answer);
-                    Request request = new Request(RequestType.deposit, id, amount);
-
+                    Request request = Request.createDepositRequest(amount);
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
-                    if(response.isOk()){
-                        JOptionPane.showMessageDialog(null, "Deposit was successful");
-                    }else{
-                        JOptionPane.showMessageDialog(null, "There was an error wit your deposit");
+
+                    if (response.isOk()) {
+                        JOptionPane.showMessageDialog(null, "You deposit " + amount + " successful");
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage());
                     }
-                }catch (NumberFormatException ex){
-                    JOptionPane.showMessageDialog(null, "Wrong input");
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "The input must be a number");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {
@@ -85,27 +97,25 @@ public class HomeWindow extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
                 String answer = JOptionPane.showInputDialog("Enter the amount to withdraw");
-                if(answer == null){
+                if (answer == null) {
                     return;
                 }
-                if(answer.isEmpty() || answer.isBlank()){
-                    JOptionPane.showMessageDialog(null, "Wrong input");
+                if (answer.isEmpty() || answer.isBlank()) {
+                    JOptionPane.showMessageDialog(null, "The amount to withdraw cannot be empty");
                 }
 
-                try{
+                try {
                     double amount = Double.parseDouble(answer);
-                    System.out.println(amount);
-                    Request request = new Request(RequestType.withdraw, id, amount);
-
+                    Request request = Request.createWithdrawRequest(amount);
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
-                    if(response.isOk()){
-                        JOptionPane.showMessageDialog(null, "Withdraw was successful");
-                    }else{
-                        JOptionPane.showMessageDialog(null, "There was an error wit your withdraw");
+                    if (response.isOk()) {
+                        JOptionPane.showMessageDialog(null, "Withdrawal " + amount + " successful");
+                    } else {
+                        JOptionPane.showMessageDialog(null, response.getMessage());
                     }
-                }catch (NumberFormatException ex){
-                    JOptionPane.showMessageDialog(null, "Wrong input");
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "The input must be a number");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {
@@ -118,11 +128,13 @@ public class HomeWindow extends JFrame{
         balance.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Request request = new Request(RequestType.checkBalance, id);
+                Request request = Request.createCheckBalanceRequest();
                 try {
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
-                    JOptionPane.showMessageDialog(null, response.getMessage());
+                    if (response.isOk()) {
+                        JOptionPane.showMessageDialog(null, "Your balance is: " + response.getBalance());
+                    }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {

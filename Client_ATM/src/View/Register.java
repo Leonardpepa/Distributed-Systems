@@ -1,7 +1,6 @@
 package View;
 
 import Controller.Request;
-import Controller.RequestType;
 import Controller.Response;
 
 import javax.swing.*;
@@ -12,13 +11,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class Register extends JFrame{
+public class Register extends JFrame {
 
     private static final int WIDTH = 400;
     private static final int HEIGT = 400;
-    private Socket clientSocket;
-    private ObjectInputStream input;
-    private ObjectOutputStream output;
+    private final Socket clientSocket;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
     private JPanel panel;
     private JButton register;
     private JLabel title;
@@ -29,7 +28,8 @@ public class Register extends JFrame{
 
     private JTextField name_field;
     private JButton back;
-    public Register(Socket socket,ObjectInputStream input, ObjectOutputStream output) {
+
+    public Register(Socket socket, ObjectInputStream input, ObjectOutputStream output) {
 
         clientSocket = socket;
         ObjectOutputStream clientOutputStream = output;
@@ -53,22 +53,23 @@ public class Register extends JFrame{
                 String pin_string = pin_field.getText();
                 String name = name_field.getText();
 
-                if(id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank() || name.isBlank() || name.isEmpty()){
+                if (id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank() || name.isBlank() || name.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Please fill all the fields");
                     return;
                 }
 
-                try{
+                try {
                     int id = Integer.parseInt(id_string);
                     int pin = Integer.parseInt(pin_string);
 
-                    Request request = new Request(RequestType.createAccount, id, pin, 0, name);
+                    Request request = Request.createRegisterRequest(id, pin, name, 0);
+
                     try {
                         output.writeObject(request);
                         Response response = (Response) input.readObject();
-                        if (response.isOk()){
+                        if (response.isOk()) {
                             JOptionPane.showMessageDialog(null, "Account created successfuly");
-                        }else{
+                        } else {
                             JOptionPane.showMessageDialog(null, "There was an error creating the account");
                         }
                         dispose();
@@ -78,7 +79,7 @@ public class Register extends JFrame{
                         throw new RuntimeException(ex);
                     }
 
-                }catch (NumberFormatException ex){
+                } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(null, "Something went wrong");
                 }
             }
@@ -117,8 +118,6 @@ public class Register extends JFrame{
         this.setVisible(true);
         this.setLocationRelativeTo(null);
     }
-
-
 
 
 }
