@@ -26,7 +26,6 @@ public class AccountRepository implements CRUDRepository<Account> {
         readStmt = conn.prepareStatement("SELECT * FROM " + this.table + " WHERE id = ?");
         updateStmt = conn.prepareStatement("UPDATE " + this.table + " SET pin = ? , name = ? , balance = ? WHERE id = ? ");
         deleteStmt = conn.prepareStatement("DELETE FROM " + this.table + " WHERE id = ?;");
-
     }
 
     public Account auth(int id, int pin) {
@@ -58,6 +57,7 @@ public class AccountRepository implements CRUDRepository<Account> {
             createStmt.setInt(1, object.getId());
             createStmt.setInt(2, object.getPin());
             createStmt.setString(3, object.getName());
+
             if (createStmt.executeUpdate() == 0) {
                 System.out.println("Error while inserting a new account");
             }
