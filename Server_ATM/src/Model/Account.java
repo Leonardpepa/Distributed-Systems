@@ -10,6 +10,7 @@ public class Account implements Serializable {
 
     public Account() {
     }
+
     public Account(int id, int pin, String name, double balance) {
         this.name = name;
         this.id = id;
@@ -23,12 +24,15 @@ public class Account implements Serializable {
 
     @Override
     public String toString() {
-        return "Account{" +
-                "id=" + id +
-                ", pin=" + pin +
-                ", name='" + name + '\'' +
-                ", balance=" + balance +
-                '}';
+        return "Account{" + "id=" + id + ", pin=" + pin + ", name='" + name + '\'' + ", balance=" + balance + '}';
+    }
+
+    public void deposit(double amount) {
+        this.setBalance(this.balance + amount);
+    }
+
+    public void withdraw(double amount) {
+        this.setBalance(this.balance - amount);
     }
 
     public String getName() {

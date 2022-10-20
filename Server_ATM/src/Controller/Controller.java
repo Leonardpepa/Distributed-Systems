@@ -39,6 +39,7 @@ public class Controller extends Thread {
         while (true) {
             try {
                 Request request = (Request) input.readObject();
+                // if customer is logged in then we have his id
                 if (client_id != -1) request.setId(client_id);
                 ServerProtocol serverProtocol = new ServerProtocol(request, this);
                 Response response = serverProtocol.proccessRequest();

@@ -59,8 +59,11 @@ public class ServerProtocol {
 
     private Response proccessDeposit() {
         double amountToDeposit = request.getAmount();
+        if (amountToDeposit == 0) {
+            return Response.createGeneralErrorResponse("The amount cannot be 0");
+        }
         Account account = service.read(request.getId());
-        account.setBalance(account.getBalance() + amountToDeposit);
+        account.deposit(amountToDeposit);
         account = service.update(account);
 
         if (account == null) {
@@ -71,11 +74,16 @@ public class ServerProtocol {
 
     private Response proccessWithdraw() {
         double amountToWithdraw = request.getAmount();
+        if (amountToWithdraw == 0) {
+            return Response.createGeneralErrorResponse("The amount cannot be 0");
+        }
+
         Account account = service.read(request.getId());
+
         if (account.getBalance() - amountToWithdraw < 0) {
             return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
         }
-        account.setBalance(account.getBalance() - amountToWithdraw);
+        account.withdraw(amountToWithdraw);
         service.update(account);
 
         return Response.createGeneralSuccessResponse();
