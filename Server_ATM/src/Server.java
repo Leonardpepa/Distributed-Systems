@@ -30,9 +30,11 @@ public class Server {
         System.out.println("Server Listening on port " + this.PORT);
         while (true) {
             try {
+                System.out.println("here");
                 Socket clientConnected = server.accept();
                 System.out.println("Client " + clientConnected.getInetAddress() + " connected");
-                new Controller(clientConnected).start();
+                Controller controllerThread = new Controller(clientConnected);
+                controllerThread.start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
