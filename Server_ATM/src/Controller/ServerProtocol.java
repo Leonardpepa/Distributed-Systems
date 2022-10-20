@@ -36,6 +36,7 @@ public class ServerProtocol {
 
     private Response logout() {
         Response response = Response.createGeneralSuccessResponse();
+        System.out.println("Client with id " + controller.getClient_id() + " logged out");
         controller.setClient_id(-1);
         return response;
     }
@@ -46,6 +47,7 @@ public class ServerProtocol {
             return Response.createGeneralErrorResponse("Authentication failed");
         }
         controller.setClient_id(acc.getId());
+        System.out.println("Client with id " + controller.getClient_id() + " Logged in");
         return Response.createAuthSuccessResponse(acc.getId(), acc.getName());
     }
 
