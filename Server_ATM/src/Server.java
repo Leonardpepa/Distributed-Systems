@@ -27,7 +27,7 @@ public class Server {
     }
 
     public void listen() {
-        System.out.println("Server Listening on http:/localhost:" + this.PORT);
+        System.out.println("Server Listening on http://localhost:" + this.PORT);
         while (true) {
             try {
                 Socket clientConnected = server.accept();
