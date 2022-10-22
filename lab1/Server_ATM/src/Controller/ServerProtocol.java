@@ -3,6 +3,8 @@ package Controller;
 import Model.Account;
 import Model.AccountRepository;
 
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 public class ServerProtocol {
     private final Request request;
     private final AccountRepository service;
@@ -37,6 +39,7 @@ public class ServerProtocol {
     private Response logout() {
         Response response = Response.createGeneralSuccessResponse();
         System.out.println("Client with id " + controller.getClient_id() + " logged out");
+        controller.locks.remove(controller.getClient_id());
         controller.setClient_id(-1);
         return response;
     }
@@ -47,55 +50,81 @@ public class ServerProtocol {
             return Response.createGeneralErrorResponse("Authentication failed");
         }
         controller.setClient_id(acc.getId());
+        controller.locks.putIfAbsent(acc.getId(), new ReentrantReadWriteLock());
         System.out.println("Client with id " + controller.getClient_id() + " Logged in");
         return Response.createAuthSuccessResponse(acc.getId(), acc.getName());
     }
 
     private Response createAcc() {
-        Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
-        if (service.create(account) == null) {
-            return Response.createGeneralErrorResponse("Account creation failed");
+        System.out.println("Id " + request.getId() + "Create account Method");
+        ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+        controller.locks.putIfAbsent(request.getId(), lock);
+        controller.lockWrite(request.getId());
+        try{
+            Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
+            if (service.create(account) == null) {
+                return Response.createGeneralErrorResponse("Account creation failed");
+            }
+            return Response.createGeneralSuccessResponse();
+        }finally {
+            controller.unlockWrite(request.getId());
         }
-        return Response.createGeneralSuccessResponse();
     }
 
     private Response proccessDeposit() {
-        double amountToDeposit = request.getAmount();
-        if (amountToDeposit == 0) {
-            return Response.createGeneralErrorResponse("The amount cannot be 0");
-        }
-        Account account = service.read(request.getId());
-        account.deposit(amountToDeposit);
-        account = service.update(account);
+        System.out.println("Id " + request.getId() + " Deposit");
+        controller.lockWrite(request.getId());
+        try {
+            double amountToDeposit = request.getAmount();
+            if (amountToDeposit == 0) {
+                return Response.createGeneralErrorResponse("The amount cannot be 0");
+            }
+            Account account = service.read(request.getId());
+            account.deposit(amountToDeposit);
+            account = service.update(account);
 
-        if (account == null) {
-            return Response.createGeneralErrorResponse("Deposit failed");
+            if (account == null) {
+                return Response.createGeneralErrorResponse("Deposit failed");
+            }
+            return Response.createGeneralSuccessResponse();
+        }finally {
+            controller.unlockWrite(request.getId());
         }
-        return Response.createGeneralSuccessResponse();
     }
 
     private Response proccessWithdraw() {
-        double amountToWithdraw = request.getAmount();
-        if (amountToWithdraw == 0) {
-            return Response.createGeneralErrorResponse("The amount cannot be 0");
+        System.out.println("Id " + request.getId() + " Withdraw");
+        controller.lockWrite(request.getId());
+        try{
+            double amountToWithdraw = request.getAmount();
+            if (amountToWithdraw == 0) {
+                return Response.createGeneralErrorResponse("The amount cannot be 0");
+            }
+
+            Account account = service.read(request.getId());
+
+            if (account.getBalance() - amountToWithdraw < 0) {
+                return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
+            }
+            account.withdraw(amountToWithdraw);
+            service.update(account);
+            return Response.createGeneralSuccessResponse();
+        }finally {
+            controller.unlockWrite(request.getId());
         }
-
-        Account account = service.read(request.getId());
-
-        if (account.getBalance() - amountToWithdraw < 0) {
-            return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
-        }
-        account.withdraw(amountToWithdraw);
-        service.update(account);
-
-        return Response.createGeneralSuccessResponse();
     }
 
     private Response proccessCheckBalance() {
-        Account account = service.read(request.getId());
-        if (account == null) {
-            return Response.createGeneralErrorResponse("Server error");
+        System.out.println("Id " + request.getId() + " Check Balance");
+        controller.lockRead(request.getId());
+        try{
+            Account account = service.read(request.getId());
+            if (account == null) {
+                return Response.createGeneralErrorResponse("Server error");
+            }
+            return Response.createCheckBalanceResponse(account.getBalance());
+        }finally {
+            controller.unlockRead(request.getId());
         }
-        return Response.createCheckBalanceResponse(account.getBalance());
     }
 }
