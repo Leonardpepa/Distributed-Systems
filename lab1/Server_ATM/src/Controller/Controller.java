@@ -13,6 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Controller extends Thread {
 
+    public ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
     private int client_id = -1;
     private Socket clientSocket = null;
     private ObjectInputStream input = null;
@@ -20,7 +21,6 @@ public class Controller extends Thread {
     private DatabaseConnector connector = null;
     private AccountRepository repository = null;
 
-    public ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
     public Controller(Socket socket, ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks) {
         this.clientSocket = socket;
         this.locks = locks;
@@ -95,36 +95,40 @@ public class Controller extends Thread {
         this.client_id = client_id;
     }
 
-    public void lockRead(int id){
+    public void lockRead(int id) {
         ReentrantReadWriteLock lock = locks.get(id);
         if (lock == null) return;
         System.out.println("---------------");
         lock.readLock().lock();
         System.out.println("Account Id: " + id + " ReadLock: " + lock.getReadLockCount() + " WriteLock: " + lock.getWriteHoldCount());
+        System.out.println("---------------");
     }
 
-    public void unlockRead(int id){
+    public void unlockRead(int id) {
         ReentrantReadWriteLock lock = locks.get(id);
         if (lock == null) return;
         System.out.println("---------------");
         lock.readLock().unlock();
         System.out.println("Account Id: " + id + " ReadLock: " + lock.getReadLockCount() + " WriteLock: " + lock.getWriteHoldCount());
+        System.out.println("---------------");
     }
 
-    public void lockWrite(int id){
+    public void lockWrite(int id) {
         ReentrantReadWriteLock lock = locks.get(id);
         if (lock == null) return;
         System.out.println("---------------");
         lock.writeLock().lock();
         System.out.println("Account Id: " + id + " ReadLock: " + lock.getReadLockCount() + " WriteLock: " + lock.getWriteHoldCount());
+        System.out.println("---------------");
     }
 
-    public void unlockWrite(int id){
+    public void unlockWrite(int id) {
         ReentrantReadWriteLock lock = locks.get(id);
         if (lock == null) return;
         System.out.println("---------------");
         lock.writeLock().unlock();
         System.out.println("Account Id: " + id + " ReadLock: " + lock.getReadLockCount() + " WriteLock: " + lock.getWriteHoldCount());
+        System.out.println("---------------");
     }
 
 

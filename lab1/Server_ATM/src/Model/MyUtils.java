@@ -1,7 +1,5 @@
 package Model;
 
-import Model.Account;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

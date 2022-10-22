@@ -8,10 +8,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
 
+    public static ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
     private final ServerSocket server;
     private int PORT = 3008;
-
-    public static ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
 
     public Server(int port) {
         this.PORT = port;

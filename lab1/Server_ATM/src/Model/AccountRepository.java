@@ -76,7 +76,6 @@ public class AccountRepository implements CRUDRepository<Account> {
             readStmt.setInt(1, id);
             ResultSet res = readStmt.executeQuery();
             if (!res.next()) {
-                System.out.println("Error while reading an account");
                 return null;
             }
             Account acc = MyUtils.decerializeAcc(res);
@@ -92,7 +91,7 @@ public class AccountRepository implements CRUDRepository<Account> {
         Account found = read(object.getId());
 
         if (found == null) {
-            System.out.println("Account with that id doesnt exist");
+            System.out.println("Account with that id doesn't exist");
             return null;
         }
 

@@ -3,7 +3,6 @@ package Controller;
 import java.io.Serializable;
 
 public class Response implements Serializable {
-
     private int id;
     private String name;
     private double balance;
