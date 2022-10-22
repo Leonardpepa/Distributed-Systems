@@ -6,14 +6,15 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class DatabaseConnector {
-    private final Connection dbConnection;
+    private Connection dbConnection = null;
 
     public DatabaseConnector(String databaseName) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
             this.dbConnection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/" + databaseName + "?user=root&password=");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error with sql server please check if sql server is up!");
+            System.exit(1);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -27,7 +28,8 @@ public class DatabaseConnector {
             statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + name);
             statement.executeQuery("CREATE TABLE IF NOT EXISTS " + name + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println("Error with sql server please check if sql server is up!");
+            System.exit(1);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
