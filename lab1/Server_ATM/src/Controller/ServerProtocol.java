@@ -24,9 +24,9 @@ public class ServerProtocol {
             case register:
                 return createAcc();
             case deposit:
-                return proccessDeposit();
+                return processDeposit();
             case withdraw:
-                return proccessWithdraw();
+                return processWithdraw();
             case checkBalance:
                 return proccessCheckBalance();
             case logout:
@@ -68,9 +68,13 @@ public class ServerProtocol {
         controller.lockWrite(request.getId());
 
         try {
+            Account foundAccount = service.read(request.getId());
+            if (foundAccount != null) {
+                return Response.createGeneralErrorResponse("Account already exists");
+            }
             Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
             if (service.create(account) == null) {
-                return Response.createGeneralErrorResponse("Account creation failed");
+                return Response.createGeneralErrorResponse("Account creation failed please try again");
             }
             return Response.createGeneralSuccessResponse();
         } finally {
@@ -78,20 +82,25 @@ public class ServerProtocol {
         }
     }
 
-    private Response proccessDeposit() {
+    private Response processDeposit() {
         System.out.println("- Id " + request.getId() + " Deposit -");
         controller.lockWrite(request.getId());
 
         try {
             double amountToDeposit = request.getAmount();
+
             if (amountToDeposit == 0) {
                 return Response.createGeneralErrorResponse("The amount cannot be 0");
             }
-            Account account = service.read(request.getId());
-            account.deposit(amountToDeposit);
-            account = service.update(account);
+            Account accountFound = service.read(request.getId());
 
-            if (account == null) {
+            if (accountFound == null) {
+                return Response.createGeneralErrorResponse("There was an error with the request");
+            }
+
+            accountFound.deposit(amountToDeposit);
+
+            if (service.update(accountFound) == null) {
                 return Response.createGeneralErrorResponse("Deposit failed");
             }
             return Response.createGeneralSuccessResponse();
@@ -100,7 +109,7 @@ public class ServerProtocol {
         }
     }
 
-    private Response proccessWithdraw() {
+    private Response processWithdraw() {
         System.out.println("- Id " + request.getId() + " Withdraw -");
         controller.lockWrite(request.getId());
 
@@ -110,14 +119,19 @@ public class ServerProtocol {
                 return Response.createGeneralErrorResponse("The amount cannot be 0");
             }
 
-            Account account = service.read(request.getId());
+            Account accountFound = service.read(request.getId());
+            if (accountFound == null) {
+                return Response.createGeneralErrorResponse("There was an error with the request");
+            }
 
-            if (account.getBalance() - amountToWithdraw < 0) {
+            if (accountFound.getBalance() - amountToWithdraw < 0) {
                 return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
             }
 
-            account.withdraw(amountToWithdraw);
-            service.update(account);
+            accountFound.withdraw(amountToWithdraw);
+            if (service.update(accountFound) == null) {
+                return Response.createGeneralErrorResponse("Withdrawal failed");
+            }
 
             return Response.createGeneralSuccessResponse();
         } finally {

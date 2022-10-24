@@ -46,12 +46,6 @@ public class AccountRepository implements CRUDRepository<Account> {
 
     @Override
     public Account create(Account object) {
-        Account found = read(object.getId());
-
-        if (found != null) {
-            System.out.println("Account already exists");
-            return null;
-        }
         try {
             createStmt.clearParameters();
             createStmt.setInt(1, object.getId());
@@ -59,7 +53,7 @@ public class AccountRepository implements CRUDRepository<Account> {
             createStmt.setString(3, object.getName());
 
             if (createStmt.executeUpdate() == 0) {
-                System.out.println("Error while inserting a new account");
+                return null;
             }
 
             System.out.println("Created: " + object);
@@ -88,22 +82,14 @@ public class AccountRepository implements CRUDRepository<Account> {
 
     @Override
     public Account update(Account object) {
-        Account found = read(object.getId());
-
-        if (found == null) {
-            System.out.println("Account with that id doesn't exist");
-            return null;
-        }
-
         try {
             updateStmt.clearParameters();
             updateStmt.setInt(1, object.getPin());
             updateStmt.setString(2, object.getName());
             updateStmt.setDouble(3, object.getBalance());
-            updateStmt.setInt(4, found.getId());
+            updateStmt.setInt(4, object.getId());
 
             if (updateStmt.executeUpdate() == 0) {
-                System.out.println("Error something went wrong with update");
                 return null;
             }
             System.out.println("Updated: " + object);
@@ -119,7 +105,7 @@ public class AccountRepository implements CRUDRepository<Account> {
         Account found = read(object.getId());
 
         if (found == null) {
-            System.out.println("Account with that id doesnt exist");
+            System.out.println("Account with that id doesn't exist");
             return null;
         }
 
