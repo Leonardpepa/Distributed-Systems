@@ -29,6 +29,7 @@ public class Register extends JFrame {
     private JTextField name_field;
     private JButton back;
 
+    // get the socket connection and the input stream already connected
     public Register(Socket socket, ObjectInputStream input, ObjectOutputStream output, JFrame parentFrame) {
 
         clientSocket = socket;
@@ -39,6 +40,7 @@ public class Register extends JFrame {
 
         setUpGUI(parentFrame);
 
+        // navigate to Login window
         back.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -54,27 +56,33 @@ public class Register extends JFrame {
                 String pin_string = pin_field.getText();
                 String name = name_field.getText();
 
-                if (id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank() || name.isBlank() || name.isEmpty()) {
+                // check if fields are empty and warn the user
+                if (id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank() || name.isBlank() || name.isEmpty() || name.equals("Enter your name")) {
                     JOptionPane.showMessageDialog(Register.this, "Please fill all the fields");
                     return;
                 }
 
                 try {
+                    // parse the id and pin into integer values
                     int id = Integer.parseInt(id_string);
                     int pin = Integer.parseInt(pin_string);
 
+                    // create Register request
                     Request request = Request.createRegisterRequest(id, pin, name, 0);
 
+                    // send request to the server and wait for the response
                     try {
                         output.writeObject(request);
                         Response response = (Response) input.readObject();
+
+                        // if the request is successful then we navigate back to the login screen
                         if (response.isOk()) {
                             JOptionPane.showMessageDialog(Register.this, "Account created successfuly");
+                            dispose();
+                            parentFrame.setVisible(true);
                         } else {
                             JOptionPane.showMessageDialog(Register.this, "There was an error creating the account");
                         }
-                        dispose();
-                        parentFrame.setVisible(true);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     } catch (ClassNotFoundException ex) {

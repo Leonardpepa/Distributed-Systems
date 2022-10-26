@@ -29,7 +29,7 @@ public class Login extends JFrame {
     private JTextField pin_field;
 
     public Login() {
-
+        // Connect to server and initialize the streams
         try {
             clientSocket = new Socket("localhost", 3008);
             ObjectOutputStream clientOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
@@ -38,6 +38,7 @@ public class Login extends JFrame {
             this.input = clientInputStream;
             this.output = clientOutputStream;
 
+            // set up the gui
             setUpGUI();
 
         } catch (IOException e) {
@@ -45,27 +46,31 @@ public class Login extends JFrame {
             return;
         }
 
-
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String id_string = id_field.getText();
                 String pin_string = pin_field.getText();
 
+                // check if fields are empty and warn the user
                 if (id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank()) {
                     JOptionPane.showMessageDialog(Login.this, "Please fill all the fields");
                     return;
                 }
 
                 try {
+                    // parse the fields to integer values
                     int id = Integer.parseInt(id_string);
                     int pin = Integer.parseInt(pin_string);
 
+                    // create the authentication request
                     Request request = Request.createAuthRequest(id, pin);
 
                     try {
+                        // send the request to the server and et the response
                         output.writeObject(request);
                         Response response = (Response) input.readObject();
+                        // if response is successful login else show message to the user
                         if (response.isOk()) {
                             Login.this.setVisible(false);
                             new HomeWindow(clientSocket, input, output, response.getId(), response.getName(), Login.this);
@@ -78,6 +83,7 @@ public class Login extends JFrame {
                         throw new RuntimeException(ex);
                     }
                 } catch (NumberFormatException ex) {
+                    // show message to the user if parsing the inputs failed
                     JOptionPane.showMessageDialog(Login.this, "Please fill all the fields");
                 }
             }
@@ -87,6 +93,7 @@ public class Login extends JFrame {
         register.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // open register window
                 Login.this.setVisible(false);
                 new Register(clientSocket, input, output, Login.this);
             }
@@ -94,6 +101,7 @@ public class Login extends JFrame {
 
     }
 
+    // Gui configurations
     public void setUpGUI() {
         panel = new JPanel();
         panel.setLayout(null);
