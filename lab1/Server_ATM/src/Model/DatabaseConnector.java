@@ -14,6 +14,11 @@ public class DatabaseConnector {
             this.dbConnection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/" + databaseName + "?user=root&password=");
         } catch (SQLException e) {
             System.err.println("Error with sql server please check if sql server is up!");
+            try {
+                dbConnection.close();
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
             System.exit(1);
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

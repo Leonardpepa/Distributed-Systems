@@ -46,7 +46,7 @@ public class Controller extends Thread {
                 // if customer is logged in then we have his id
                 if (client_id != -1) request.setId(client_id);
                 ServerProtocol serverProtocol = new ServerProtocol(request, this);
-                Response response = serverProtocol.proccessRequest();
+                Response response = serverProtocol.processRequest();
                 output.writeObject(response);
             } catch (IOException e) {
                 errorOccurred = true;
@@ -74,22 +74,6 @@ public class Controller extends Thread {
                 }
             }
         }
-    }
-
-    public DatabaseConnector getConnector() {
-        return connector;
-    }
-
-    public void setConnector(DatabaseConnector connector) {
-        this.connector = connector;
-    }
-
-    public AccountRepository getRepository() {
-        return repository;
-    }
-
-    public void setRepository(AccountRepository repository) {
-        this.repository = repository;
     }
 
     public int getClient_id() {
@@ -136,5 +120,21 @@ public class Controller extends Thread {
         System.out.println("---------------");
     }
 
+
+    public DatabaseConnector getConnector() {
+        return connector;
+    }
+
+    public void setConnector(DatabaseConnector connector) {
+        this.connector = connector;
+    }
+
+    public AccountRepository getRepository() {
+        return repository;
+    }
+
+    public void setRepository(AccountRepository repository) {
+        this.repository = repository;
+    }
 
 }

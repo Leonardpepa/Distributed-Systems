@@ -17,10 +17,10 @@ public class ServerProtocol {
         this.service = controller.getRepository();
     }
 
-    public Response proccessRequest() {
+    public Response processRequest() {
         switch (request.getType()) {
             case auth:
-                return proccessAuth();
+                return processAuth();
             case register:
                 return createAcc();
             case deposit:
@@ -46,7 +46,7 @@ public class ServerProtocol {
         return response;
     }
 
-    private Response proccessAuth() {
+    private Response processAuth() {
         Account acc = service.auth(request.getId(), request.getPin());
 
         if (acc == null) {
