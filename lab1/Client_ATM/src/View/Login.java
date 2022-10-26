@@ -6,6 +6,8 @@ import Controller.Response;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,7 +15,7 @@ import java.net.Socket;
 
 public class Login extends JFrame {
     private static final int WIDTH = 400;
-    private static final int HEIGT = 400;
+    private static final int HEIGHT = 400;
     private Socket clientSocket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
@@ -37,8 +39,7 @@ public class Login extends JFrame {
             this.output = clientOutputStream;
 
         } catch (IOException e) {
-//            throw new RuntimeException(e);
-            JOptionPane.showMessageDialog(null, "Server is not responding");
+            JOptionPane.showMessageDialog(Login.this, "Server is not responding");
             return;
         }
 
@@ -51,7 +52,7 @@ public class Login extends JFrame {
                 String pin_string = pin_field.getText();
 
                 if (id_string.isEmpty() || pin_string.isEmpty() || id_string.isBlank() || pin_string.isBlank()) {
-                    JOptionPane.showMessageDialog(null, "Please fill all the fields");
+                    JOptionPane.showMessageDialog(Login.this, "Please fill all the fields");
                     return;
                 }
 
@@ -65,9 +66,10 @@ public class Login extends JFrame {
                         output.writeObject(request);
                         Response response = (Response) input.readObject();
                         if (response.isOk()) {
-                            new HomeWindow(clientSocket, input, output, response.getId(), response.getName());
+                            Login.this.setVisible(false);
+                            new HomeWindow(clientSocket, input, output, response.getId(), response.getName(), Login.this);
                         } else {
-                            JOptionPane.showMessageDialog(null, response.getMessage());
+                            JOptionPane.showMessageDialog(Login.this, response.getMessage());
                         }
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
@@ -75,7 +77,7 @@ public class Login extends JFrame {
                         throw new RuntimeException(ex);
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Please fill all the fields");
+                    JOptionPane.showMessageDialog(Login.this, "Please fill all the fields");
                 }
             }
         });
@@ -84,6 +86,7 @@ public class Login extends JFrame {
         register.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Login.this.setVisible(false);
                 new Register(clientSocket, input, output, Login.this);
             }
         });
@@ -100,18 +103,19 @@ public class Login extends JFrame {
         id_field = new JTextField("Enter your id");
         pin_field = new JTextField("Enter your pin");
 
-        id_field.setBounds(30, HEIGT / 2 - 100, 150, 30);
-        pin_field.setBounds(200, HEIGT / 2 - 100, 150, 30);
-        title.setBounds(WIDTH / 2 - 70, HEIGT / 2 - 200, 200, 50);
-        login.setBounds(WIDTH / 2 - 50, HEIGT / 2 - 50, 100, 50);
-        register.setBounds(WIDTH / 2 - 50, HEIGT / 2 + 25, 100, 50);
+        id_field.setBounds(30, HEIGHT / 2 - 100, 150, 30);
+        pin_field.setBounds(200, HEIGHT / 2 - 100, 150, 30);
+        title.setBounds(WIDTH / 2 - 70, HEIGHT / 2 - 200, 200, 50);
+        login.setBounds(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 50);
+        register.setBounds(WIDTH / 2 - 50, HEIGHT / 2 + 25, 100, 50);
         panel.add(title);
         panel.add(login);
         panel.add(register);
         panel.add(id_field);
         panel.add(pin_field);
         this.setContentPane(panel);
-        this.setSize(WIDTH, HEIGT);
+        this.setTitle("Login Pamak Bank");
+        this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
         this.setLocationRelativeTo(null);

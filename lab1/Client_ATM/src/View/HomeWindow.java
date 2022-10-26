@@ -16,7 +16,7 @@ public class HomeWindow extends JFrame {
 
 
     private static final int WIDTH = 400;
-    private static final int HEIGT = 400;
+    private static final int HEIGHT = 400;
     private final Socket clientSocket;
     private final ObjectInputStream input;
     private final ObjectOutputStream output;
@@ -32,13 +32,14 @@ public class HomeWindow extends JFrame {
 
     private JLabel welocme;
 
-    public HomeWindow(Socket clientSocket, ObjectInputStream input, ObjectOutputStream output, int id, String name) {
+    public HomeWindow(Socket clientSocket, ObjectInputStream input, ObjectOutputStream output, int id, String name, JFrame parentFrame) {
         this.clientSocket = clientSocket;
         this.input = input;
         this.output = output;
         this.id = id;
         this.name = name;
-        setUpGUI();
+
+        setUpGUI(parentFrame);
 
         exit.addActionListener(new ActionListener() {
             @Override
@@ -49,8 +50,9 @@ public class HomeWindow extends JFrame {
                     Response response = (Response) input.readObject();
                     if (response.isOk()) {
                         dispose();
+                        parentFrame.setVisible(true);
                     } else {
-                        JOptionPane.showMessageDialog(null, "An error occurred please try again");
+                        JOptionPane.showMessageDialog(HomeWindow.this, "An error occurred please try again");
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -69,7 +71,7 @@ public class HomeWindow extends JFrame {
                     return;
                 }
                 if (answer.isEmpty() || answer.isBlank()) {
-                    JOptionPane.showMessageDialog(null, "The amount to deposit cannot be empty");
+                    JOptionPane.showMessageDialog(HomeWindow.this, "The amount to deposit cannot be empty");
                 }
                 try {
                     double amount = Double.parseDouble(answer);
@@ -78,13 +80,13 @@ public class HomeWindow extends JFrame {
                     Response response = (Response) input.readObject();
 
                     if (response.isOk()) {
-                        JOptionPane.showMessageDialog(null, "You deposit " + amount + " successful");
+                        JOptionPane.showMessageDialog(HomeWindow.this, "You deposit " + amount + " successful");
                     } else {
-                        JOptionPane.showMessageDialog(null, response.getMessage());
+                        JOptionPane.showMessageDialog(HomeWindow.this, response.getMessage());
                     }
 
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "The input must be a number");
+                    JOptionPane.showMessageDialog(HomeWindow.this, "The input must be a number");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {
@@ -101,7 +103,7 @@ public class HomeWindow extends JFrame {
                     return;
                 }
                 if (answer.isEmpty() || answer.isBlank()) {
-                    JOptionPane.showMessageDialog(null, "The amount to withdraw cannot be empty");
+                    JOptionPane.showMessageDialog(HomeWindow.this, "The amount to withdraw cannot be empty");
                 }
 
                 try {
@@ -110,12 +112,12 @@ public class HomeWindow extends JFrame {
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
                     if (response.isOk()) {
-                        JOptionPane.showMessageDialog(null, "Withdrawal " + amount + " successful");
+                        JOptionPane.showMessageDialog(HomeWindow.this, "Withdrawal " + amount + " successful");
                     } else {
-                        JOptionPane.showMessageDialog(null, response.getMessage());
+                        JOptionPane.showMessageDialog(HomeWindow.this, response.getMessage());
                     }
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "The input must be a number");
+                    JOptionPane.showMessageDialog(HomeWindow.this, "The input must be a number");
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 } catch (ClassNotFoundException ex) {
@@ -133,7 +135,7 @@ public class HomeWindow extends JFrame {
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
                     if (response.isOk()) {
-                        JOptionPane.showMessageDialog(null, "Your balance is: " + response.getBalance());
+                        JOptionPane.showMessageDialog(HomeWindow.this, "Your balance is: " + response.getBalance());
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -146,7 +148,7 @@ public class HomeWindow extends JFrame {
 
     }
 
-    public void setUpGUI() {
+    public void setUpGUI(JFrame parentFrame) {
         panel = new JPanel();
         panel.setLayout(new GridLayout(4, 1));
         container = new JPanel();
@@ -154,6 +156,7 @@ public class HomeWindow extends JFrame {
         header = new JPanel();
         welocme = new JLabel("Welcome " + this.name);
         welocme.setSize(100, 50);
+        welocme.setFont(new Font("Arial", Font.CENTER_BASELINE, 32));
         header.add(welocme);
         deposit = new JButton("Deposit");
         withdraw = new JButton("Withdraw");
@@ -169,10 +172,11 @@ public class HomeWindow extends JFrame {
         container.add(panel, BorderLayout.CENTER);
 
         this.setContentPane(container);
-        this.setSize(WIDTH, HEIGT);
+        this.setTitle("Pamak Bank Home");
+        this.setSize(WIDTH, HEIGHT);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(parentFrame);
 
     }
 }
