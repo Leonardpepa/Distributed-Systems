@@ -2,6 +2,7 @@ import Controller.Controller;
 import Model.DatabaseConnector;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,7 +12,7 @@ public class Server {
 
     public static ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
     private final ServerSocket server;
-    private int PORT = 3008;
+    private int PORT = 8080;
 
     public Server(int port) {
         this.PORT = port;
