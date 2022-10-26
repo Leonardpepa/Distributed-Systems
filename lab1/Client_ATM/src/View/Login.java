@@ -31,7 +31,7 @@ public class Login extends JFrame {
     public Login() {
         // Connect to server and initialize the streams
         try {
-            clientSocket = new Socket("localhost", 3008);
+            clientSocket = new Socket("localhost", 8080);
             ObjectOutputStream clientOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream clientInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
