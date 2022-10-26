@@ -60,12 +60,17 @@ public class Controller extends Thread {
             } finally {
                 try {
                     if (errorOccurred) {
+                        input.close();
+                        output.close();
                         clientSocket.close();
+                        connector.getDbConnection().close();
                         System.out.println("Client " + clientSocket.getInetAddress() + " disconnected");
                         return;
                     }
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }

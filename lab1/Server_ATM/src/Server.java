@@ -1,4 +1,5 @@
 import Controller.Controller;
+import Model.DatabaseConnector;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,6 +16,8 @@ public class Server {
     public Server(int port) {
         this.PORT = port;
         try {
+            // make sure that database and table exist
+            DatabaseConnector.initDB("bank");
             server = new ServerSocket(this.PORT);
             locks = new ConcurrentHashMap<>();
         } catch (IOException e) {
@@ -24,6 +27,8 @@ public class Server {
 
     public Server() {
         try {
+            // make sure that database and table exist
+            DatabaseConnector.initDB("bank");
             server = new ServerSocket(this.PORT);
             locks = new ConcurrentHashMap<>();
         } catch (IOException e) {
@@ -32,7 +37,7 @@ public class Server {
     }
 
     public void listen() {
-        System.out.println("Server Listening on http://localhost:" + this.PORT);
+        System.out.println("Server Listening on port: " + this.PORT);
         while (true) {
             try {
                 Socket clientConnected = server.accept();
