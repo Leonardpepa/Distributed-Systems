@@ -4,6 +4,7 @@ import Controller.Request;
 import Controller.Response;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -107,6 +108,10 @@ public class Register extends JFrame {
         id_field = new JTextField("Enter your id");
         pin_field = new JTextField("Enter your pin");
         name_field = new JTextField("Enter your name");
+
+        title.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
+        title.setBounds(80, HEIGHT / 2 - 175, WIDTH, 50);
+
 
         id_field.setBounds(30, HEIGHT / 2 - 100, 150, 30);
         pin_field.setBounds(200, HEIGHT / 2 - 100, 150, 30);

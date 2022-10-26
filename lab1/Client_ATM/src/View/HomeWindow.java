@@ -157,7 +157,7 @@ public class HomeWindow extends JFrame {
         header = new JPanel();
         welocme = new JLabel("Welcome " + this.name);
         welocme.setSize(100, 50);
-        welocme.setFont(new Font("Arial", Font.CENTER_BASELINE, 32));
+        welocme.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
         header.add(welocme);
         deposit = new JButton("Deposit");
         withdraw = new JButton("Withdraw");
