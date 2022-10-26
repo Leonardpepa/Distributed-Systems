@@ -38,12 +38,13 @@ public class Login extends JFrame {
             this.input = clientInputStream;
             this.output = clientOutputStream;
 
+            setUpGUI();
+
         } catch (IOException e) {
             JOptionPane.showMessageDialog(Login.this, "Server is not responding");
             return;
         }
 
-        setUpGUI();
 
         login.addActionListener(new ActionListener() {
             @Override
