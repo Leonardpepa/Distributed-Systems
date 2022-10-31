@@ -9,12 +9,12 @@ public class ServerProtocol {
     private final Request request;
     private final AccountRepository service;
 
-    private final Controller controller;
+    private final ControllerThread controllerThread;
 
-    public ServerProtocol(Request request, Controller controller) {
+    public ServerProtocol(Request request, ControllerThread controllerThread) {
         this.request = request;
-        this.controller = controller;
-        this.service = controller.getRepository();
+        this.controllerThread = controllerThread;
+        this.service = controllerThread.getRepository();
     }
 
     public Response processRequest() {
@@ -38,10 +38,10 @@ public class ServerProtocol {
 
     private Response logout() {
         Response response = Response.createGeneralSuccessResponse();
-        System.out.println("Client with id " + controller.getClient_id() + " logged out");
+        System.out.println("Client with id " + controllerThread.getClient_id() + " logged out");
 
-        controller.locks.remove(controller.getClient_id());
-        controller.setClient_id(-1);
+        controllerThread.locks.remove(controllerThread.getClient_id());
+        controllerThread.setClient_id(-1);
 
         return response;
     }
@@ -53,9 +53,9 @@ public class ServerProtocol {
             return Response.createGeneralErrorResponse("Authentication failed");
         }
 
-        controller.setClient_id(acc.getId());
-        controller.locks.putIfAbsent(acc.getId(), new ReentrantReadWriteLock());
-        System.out.println("Client with id " + controller.getClient_id() + " Logged in");
+        controllerThread.setClient_id(acc.getId());
+        controllerThread.locks.putIfAbsent(acc.getId(), new ReentrantReadWriteLock());
+        System.out.println("Client with id " + controllerThread.getClient_id() + " Logged in");
 
         return Response.createAuthSuccessResponse(acc.getId(), acc.getName());
     }
@@ -64,8 +64,8 @@ public class ServerProtocol {
         System.out.println("- Id " + request.getId() + " Create account -");
 
         ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-        controller.locks.putIfAbsent(request.getId(), lock);
-        controller.lockWrite(request.getId());
+        controllerThread.locks.putIfAbsent(request.getId(), lock);
+        controllerThread.lockWrite(request.getId());
 
         try {
             Account foundAccount = service.read(request.getId());
@@ -78,13 +78,13 @@ public class ServerProtocol {
             }
             return Response.createGeneralSuccessResponse();
         } finally {
-            controller.unlockWrite(request.getId());
+            controllerThread.unlockWrite(request.getId());
         }
     }
 
     private Response processDeposit() {
         System.out.println("- Id " + request.getId() + " Deposit -");
-        controller.lockWrite(request.getId());
+        controllerThread.lockWrite(request.getId());
 
         try {
             double amountToDeposit = request.getAmount();
@@ -105,13 +105,13 @@ public class ServerProtocol {
             }
             return Response.createGeneralSuccessResponse();
         } finally {
-            controller.unlockWrite(request.getId());
+            controllerThread.unlockWrite(request.getId());
         }
     }
 
     private Response processWithdraw() {
         System.out.println("- Id " + request.getId() + " Withdraw -");
-        controller.lockWrite(request.getId());
+        controllerThread.lockWrite(request.getId());
 
         try {
             double amountToWithdraw = request.getAmount();
@@ -135,13 +135,13 @@ public class ServerProtocol {
 
             return Response.createGeneralSuccessResponse();
         } finally {
-            controller.unlockWrite(request.getId());
+            controllerThread.unlockWrite(request.getId());
         }
     }
 
     private Response proccessCheckBalance() {
         System.out.println("- Id " + request.getId() + " Check Balance -");
-        controller.lockRead(request.getId());
+        controllerThread.lockRead(request.getId());
 
         try {
             Account account = service.read(request.getId());
@@ -150,7 +150,7 @@ public class ServerProtocol {
             }
             return Response.createCheckBalanceResponse(account.getBalance());
         } finally {
-            controller.unlockRead(request.getId());
+            controllerThread.unlockRead(request.getId());
         }
     }
 }

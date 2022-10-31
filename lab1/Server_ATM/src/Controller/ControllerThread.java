@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class Controller extends Thread {
+public class ControllerThread extends Thread {
 
     public ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
     private int client_id = -1;
@@ -21,7 +21,7 @@ public class Controller extends Thread {
     private DatabaseConnector connector = null;
     private AccountRepository repository = null;
 
-    public Controller(Socket socket, ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks) {
+    public ControllerThread(Socket socket, ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks) {
         this.clientSocket = socket;
         this.locks = locks;
         try {

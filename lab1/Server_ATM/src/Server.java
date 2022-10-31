@@ -1,8 +1,7 @@
-import Controller.Controller;
+import Controller.ControllerThread;
 import Model.DatabaseConnector;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,7 +42,7 @@ public class Server {
             try {
                 Socket clientConnected = server.accept();
                 System.out.println("Client " + clientConnected.getInetAddress() + " connected");
-                Controller controllerThread = new Controller(clientConnected, locks);
+                ControllerThread controllerThread = new ControllerThread(clientConnected, locks);
                 controllerThread.start();
             } catch (IOException e) {
                 throw new RuntimeException(e);
