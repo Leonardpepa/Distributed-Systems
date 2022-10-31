@@ -9,6 +9,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class Server {
 
+    // Shared hashmap that stores ReentrantReadWriteLock lock for each connected and authenticated client
     public static ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
     private final ServerSocket server;
     private int PORT = 8080;
@@ -41,9 +42,11 @@ public class Server {
         while (true) {
             try {
                 Socket clientConnected = server.accept();
-                System.out.println("Client " + clientConnected.getInetAddress() + " connected");
+                // create a controller thread for each connection and pass the socket and the shared locks
                 ControllerThread controllerThread = new ControllerThread(clientConnected, locks);
                 controllerThread.start();
+
+                System.out.println("Client " + clientConnected.getInetAddress() + " connected");
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

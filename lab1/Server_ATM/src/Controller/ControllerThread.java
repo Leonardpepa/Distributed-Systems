@@ -13,7 +13,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ControllerThread extends Thread {
 
+    // Shared hashmap that stores ReentrantReadWriteLock lock for each connected and authenticated client
     public ConcurrentHashMap<Integer, ReentrantReadWriteLock> locks;
+
+    // authenticated client id
     private int client_id = -1;
     private Socket clientSocket = null;
     private ObjectInputStream input = null;
@@ -25,9 +28,12 @@ public class ControllerThread extends Thread {
         this.clientSocket = socket;
         this.locks = locks;
         try {
+            // initialize streams
             this.input = new ObjectInputStream(socket.getInputStream());
             this.output = new ObjectOutputStream(socket.getOutputStream());
+            // connect to database
             connector = new DatabaseConnector("bank");
+            // repository object that provides all the services that interact with the database
             repository = new AccountRepository(connector.getDbConnection(), "account");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -42,11 +48,17 @@ public class ControllerThread extends Thread {
         boolean errorOccurred = false;
         while (true) {
             try {
+                // receive the request for the client
                 Request request = (Request) input.readObject();
+
                 // if customer is logged in then we have his id
                 if (client_id != -1) request.setId(client_id);
+
+                // process the request and create a response with the help of the server protocol
                 ServerProtocol serverProtocol = new ServerProtocol(request, this);
                 Response response = serverProtocol.processRequest();
+
+                // reply with the response created from the server protocol
                 output.writeObject(response);
             } catch (IOException e) {
                 errorOccurred = true;

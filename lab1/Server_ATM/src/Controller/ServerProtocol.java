@@ -8,7 +8,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class ServerProtocol {
     private final Request request;
     private final AccountRepository service;
-
     private final ControllerThread controllerThread;
 
     public ServerProtocol(Request request, ControllerThread controllerThread) {
@@ -28,7 +27,7 @@ public class ServerProtocol {
             case withdraw:
                 return processWithdraw();
             case checkBalance:
-                return proccessCheckBalance();
+                return processCheckBalance();
             case logout:
                 return logout();
             default:
@@ -37,8 +36,9 @@ public class ServerProtocol {
     }
 
     private Response logout() {
-        Response response = Response.createGeneralSuccessResponse();
         System.out.println("Client with id " + controllerThread.getClient_id() + " logged out");
+
+        Response response = Response.createGeneralSuccessResponse();
 
         controllerThread.locks.remove(controllerThread.getClient_id());
         controllerThread.setClient_id(-1);
@@ -62,17 +62,19 @@ public class ServerProtocol {
 
     private Response createAcc() {
         System.out.println("- Id " + request.getId() + " Create account -");
-
-        ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-        controllerThread.locks.putIfAbsent(request.getId(), lock);
-        controllerThread.lockWrite(request.getId());
-
         try {
             Account foundAccount = service.read(request.getId());
+
             if (foundAccount != null) {
                 return Response.createGeneralErrorResponse("Account already exists");
             }
+
+            ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+            controllerThread.locks.putIfAbsent(request.getId(), lock);
+            controllerThread.lockWrite(request.getId());
+
             Account account = new Account(request.getId(), request.getPin(), request.getName(), 0);
+
             if (service.create(account) == null) {
                 return Response.createGeneralErrorResponse("Account creation failed please try again");
             }
@@ -139,7 +141,7 @@ public class ServerProtocol {
         }
     }
 
-    private Response proccessCheckBalance() {
+    private Response processCheckBalance() {
         System.out.println("- Id " + request.getId() + " Check Balance -");
         controllerThread.lockRead(request.getId());
 
