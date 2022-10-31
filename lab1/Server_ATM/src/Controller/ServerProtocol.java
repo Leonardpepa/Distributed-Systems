@@ -85,7 +85,7 @@ public class ServerProtocol {
     }
 
     private Response processDeposit() {
-        System.out.println("- Id " + request.getId() + " Deposit -");
+        System.out.println("- Id " + request.getId() + " Deposit " + request.getAmount() + " -");
         controllerThread.lockWrite(request.getId());
 
         try {
@@ -112,7 +112,7 @@ public class ServerProtocol {
     }
 
     private Response processWithdraw() {
-        System.out.println("- Id " + request.getId() + " Withdraw -");
+        System.out.println("- Id " + request.getId() + " Withdraw " + request.getAmount() + " -");
         controllerThread.lockWrite(request.getId());
 
         try {
