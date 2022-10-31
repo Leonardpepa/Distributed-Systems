@@ -29,10 +29,13 @@ public class Login extends JFrame {
 
     private JTextField pin_field;
 
+    private final int PORT = 8080;
+    private final String ADDRESS = "localhost";
+
     public Login() {
         // Connect to server and initialize the streams
         try {
-            clientSocket = new Socket("localhost", 8080);
+            clientSocket = new Socket(ADDRESS, PORT);
             ObjectOutputStream clientOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
             ObjectInputStream clientInputStream = new ObjectInputStream(clientSocket.getInputStream());
 
