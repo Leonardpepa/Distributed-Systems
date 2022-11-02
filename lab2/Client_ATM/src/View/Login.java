@@ -47,7 +47,7 @@ public class Login extends JFrame {
 
         } catch (IOException e) {
             JOptionPane.showMessageDialog(Login.this, "Server is not responding");
-            return;
+            System.exit(1);
         }
 
         login.addActionListener(new ActionListener() {
