@@ -1,3 +1,4 @@
+# Server side for Pamak Bank ATM
 # How to run
 Follow the guide below step by step (just copy and paste each command in a terminal)
 # Guide
