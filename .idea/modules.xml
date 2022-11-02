@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/lab2/Client_ATM/Client_ATM.iml" filepath="$PROJECT_DIR$/lab2/Client_ATM/Client_ATM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Distributed-Systems.iml" filepath="$PROJECT_DIR$/.idea/Distributed-Systems.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lab2/Server_ATM/Server_ATM.iml" filepath="$PROJECT_DIR$/lab2/Server_ATM/Server_ATM.iml" />
+    </modules>
+  </component>
+</project>
