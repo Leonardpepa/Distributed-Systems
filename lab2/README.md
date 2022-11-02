@@ -9,4 +9,4 @@
 - navigate to folder Server_ATM and read the README.md
 - navigate to folder Client_ATM and read the README.md
 
-First run the database and the server and then you cna run the client
+First run the database and the server and then you can run the client
