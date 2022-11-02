@@ -1,8 +1,6 @@
 # How to run
-* First build the images and the containers
-* Run mariadb server first
-* In the end run the java server
-
+Follow the guide below step by step (just copy and paste each command in a terminal)
+# Guide
 ## Build MariaDB Server
 ```terminal
 docker container create --name mariadb-server -p 3306:3306 -e MARIADB_ROOT_PASSWORD=pass -e MARIADB_PASSWORD=pass -e MARIADB_USER=user mariadb
