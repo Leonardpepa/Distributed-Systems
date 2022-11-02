@@ -1,6 +1,6 @@
 # How to run
 * First build the images and the containers
-* Run first the mariadb server
+* Run mariadb server first
 * In the end run the java server
 
 ## Build MariaDB Server
