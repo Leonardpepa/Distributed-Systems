@@ -20,4 +20,5 @@ docker container create --name mariadb-server -p 3306:3306 -e MARIADB_ROOT_PASSW
 ## Start Java TCP Server IN THE END
 ```terminal
     docker container start server-container --interactive
+    
 ```
