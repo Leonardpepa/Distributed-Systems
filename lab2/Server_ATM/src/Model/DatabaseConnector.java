@@ -11,7 +11,7 @@ public class DatabaseConnector {
     public DatabaseConnector(String databaseName) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/" + databaseName + "?user=root&password=pass");
+            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/" + databaseName + "?user=root&password=root");
         } catch (SQLException e) {
             System.err.println("Error with sql server please check if sql server is up!");
             try {
@@ -29,11 +29,12 @@ public class DatabaseConnector {
         Connection dbConnection = null;
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/?user=root&password=pass");
+            dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/?user=root&password=root");
             Statement statement = dbConnection.createStatement();
             statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + name);
             statement.executeQuery("CREATE TABLE IF NOT EXISTS " + name + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
         } catch (SQLException e) {
+            e.printStackTrace();
             System.err.println("Error with sql server please check if sql server is up!");
             System.exit(1);
         } catch (ClassNotFoundException e) {

@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  mariadb-server:
+    container_name: mariadb-server
+    image: mariadb
+    restart: on-failure
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_USER: admin
+      MARIADB_PASSWORD: admin
+      MARIADB_DATABASE: bank
+
+  server:
+    depends_on:
+      - mariadb-server
+    build:
+      context: ./Server_ATM
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
