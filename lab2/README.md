@@ -25,7 +25,7 @@ open a terminal and run: <br>
 ```
 when the server is ready you will see the message: server is listening in port 8080 <br>
 then you can proceed to step 2 <br>
-the first time the initialization will take some seconds please wait until the server and database are started 
+* the first time the initialization will take some time, please wait until the server and database are started 
 
 ### STEP 2 Run the Client
 to run the client you have 2 options
