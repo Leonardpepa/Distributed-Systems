@@ -30,7 +30,7 @@ public class HomeWindow extends JFrame {
     private JPanel container;
     private JPanel header;
 
-    private JLabel welocme;
+    private JLabel welcome;
 
     public HomeWindow(Socket clientSocket, ObjectInputStream input, ObjectOutputStream output, int id, String name, JFrame parentFrame) {
         this.clientSocket = clientSocket;
@@ -56,9 +56,9 @@ public class HomeWindow extends JFrame {
                         JOptionPane.showMessageDialog(HomeWindow.this, "An error occurred please try again");
                     }
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
         });
@@ -89,9 +89,9 @@ public class HomeWindow extends JFrame {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The input must be a number");
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
         });
@@ -120,9 +120,9 @@ public class HomeWindow extends JFrame {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The input must be a number");
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
         });
@@ -139,9 +139,9 @@ public class HomeWindow extends JFrame {
                         JOptionPane.showMessageDialog(HomeWindow.this, "Your balance is: " + response.getBalance());
                     }
                 } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 } catch (ClassNotFoundException ex) {
-                    throw new RuntimeException(ex);
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
         });
@@ -155,10 +155,10 @@ public class HomeWindow extends JFrame {
         container = new JPanel();
         container.setLayout(new BorderLayout());
         header = new JPanel();
-        welocme = new JLabel("Welcome " + this.name);
-        welocme.setSize(100, 50);
-        welocme.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
-        header.add(welocme);
+        welcome = new JLabel("Welcome " + this.name);
+        welcome.setSize(100, 50);
+        welcome.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
+        header.add(welcome);
         deposit = new JButton("Deposit");
         withdraw = new JButton("Withdraw");
         exit = new JButton("Exit");

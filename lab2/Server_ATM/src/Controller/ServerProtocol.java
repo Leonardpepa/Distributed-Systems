@@ -40,7 +40,7 @@ public class ServerProtocol {
 
         Response response = Response.createGeneralSuccessResponse();
 
-        controllerThread.locks.remove(controllerThread.getClient_id());
+//        controllerThread.locks.remove(controllerThread.getClient_id());
         controllerThread.setClient_id(-1);
 
         return response;

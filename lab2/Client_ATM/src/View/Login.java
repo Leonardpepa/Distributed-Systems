@@ -82,9 +82,9 @@ public class Login extends JFrame {
                             JOptionPane.showMessageDialog(Login.this, response.getMessage());
                         }
                     } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(Login.this, "Something went wrong please reopen the app and try again");
                     } catch (ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(Login.this, "Something went wrong please reopen the app and try again");
                     }
                 } catch (NumberFormatException ex) {
                     // show message to the user if parsing the inputs failed

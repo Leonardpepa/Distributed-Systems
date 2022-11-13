@@ -25,14 +25,14 @@ public class DatabaseConnector {
         }
     }
 
-    public static void initDB(String name) {
+    public static void initDB(String tableName) {
         Connection dbConnection = null;
         try {
             Class.forName("org.mariadb.jdbc.Driver");
             dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/?user=root&password=root");
             Statement statement = dbConnection.createStatement();
-            statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + name);
-            statement.executeQuery("CREATE TABLE IF NOT EXISTS " + name + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
+            statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + tableName);
+            statement.executeQuery("CREATE TABLE IF NOT EXISTS " + tableName + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("Error with sql server please check if sql server is up!");

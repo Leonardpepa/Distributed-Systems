@@ -85,9 +85,9 @@ public class Register extends JFrame {
                             JOptionPane.showMessageDialog(Register.this, "There was an error creating the account");
                         }
                     } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(Register.this, "Something went wrong please reopen the app and try again");
                     } catch (ClassNotFoundException ex) {
-                        throw new RuntimeException(ex);
+                        JOptionPane.showMessageDialog(Register.this, "Something went wrong please reopen the app and try again");
                     }
 
                 } catch (NumberFormatException ex) {
