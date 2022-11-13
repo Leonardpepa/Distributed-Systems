@@ -1,12 +1,39 @@
-# Πρωτη Εργασια - Δεν ειναι ολοκληρωμένη ακόμη
+# Εργαστήριο 2
 
-## Κατανεμημένο Σύστημα Τραπεζικών Λειτουργιών
+## Υλοποίηση Κατανεμημένου Συστήματος Τραπεζικών Λειτουργιών
 
 ## Αρχιτεκτονική Τριων Επιπέδων (3-Tier)
 
+## Structure
+* CLient_ATM contains the code for the Presentation layer
+* Server_ATM contains the code for the Business Logic and the Data Layer
+
+## Prerequisites
+* Server
+    - docker
+* Client
+    - java 8 or higher
+
 ## How to run
 
-- navigate to folder Server_ATM and read the README.md
-- navigate to folder Client_ATM and read the README.md
+### STEP 1 Run the Server
+* Be sure you are in the lab2/ folder
+open a terminal and run: <br>
 
-First run the database and the server and then you can run the client
+```terminal
+    docker compose up
+```
+when the server is ready you will see the message: server is listening in port 8080 <br>
+then you can proceed to step 2 <br>
+the first time the initialization will take some seconds please wait until the server and database are started 
+
+### STEP 2 Run the Client
+to run the client you have 2 options
+* run via the Intellij IDE
+    - open the Client_ATM as project in intellij and run the Main.java
+* run via terminal
+    - cd Client_ATM/src
+    - run:  
+    ```terminal
+        javac *.java && java Main
+    ```
