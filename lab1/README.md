@@ -93,6 +93,7 @@ class DB_Service {
 ```
 ## Πρωτόκολλο Επικοινωνίας
 H ακολουθία των μηνυμάτων θα είναι η εξής:
+![preview-image](https://github.com/leonardpepa/Distributed-Systems/blob/master/lab1/Client-Server_3-tier_architecture_-_en.png?raw=true)
 
 ## Τύποι Δεδομένων προτωκόλλου επικοινωνίας
 * Τύπος αιτήματος RequestType (Αυθεντικοποίηση, κατάθεση, ανάληψη, υπόλοιπο, εγγραφή, αποσύνδεση)
@@ -132,7 +133,7 @@ class Response {
 * Εγγραφή
 * Σύνδεση/αυθεντικοποίηση
 * κατάθεση
-* ανάθεση
+* ανάληψη
 * Υπόλοιπο
 * Αποσύνδεση
 
