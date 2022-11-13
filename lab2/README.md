@@ -32,8 +32,11 @@ to run the client you have 2 options
 * run via the Intellij IDE
     - open the Client_ATM as project in intellij and run the Main.java
 * run via terminal
-    - cd Client_ATM/src
+    - navigate to Client_ATM/src with
+    ```terminal
+        cd Client_ATM/src
+    ```
     - run:  
     ```terminal
-        javac *.java && java Main
+       cd Client_ATM/src javac *.java && java Main
     ```
