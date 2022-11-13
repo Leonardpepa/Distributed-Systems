@@ -5,7 +5,7 @@
 ## Αρχιτεκτονική Τριων Επιπέδων (3-Tier)
 
 ## Structure
-* CLient_ATM contains the code for the Presentation layer
+* Client_ATM contains the code for the Presentation layer
 * Server_ATM contains the code for the Business Logic and the Data Layer
 
 ## Prerequisites
