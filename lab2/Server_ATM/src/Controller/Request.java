@@ -13,7 +13,7 @@ public class Request implements Serializable {
 
     }
 
-    public static Request createLogoutReuest() {
+    public static Request createLogoutRequest() {
         Request request = new Request();
         request.setType(RequestType.logout);
         return request;

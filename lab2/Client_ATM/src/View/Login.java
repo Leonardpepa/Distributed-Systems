@@ -112,7 +112,6 @@ public class Login extends JFrame {
         login = new JButton("Login");
         register = new JButton("Register");
         title = new JLabel("Welcome to Pamak Bank");
-        title.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
         id_field = new JTextField("Enter your id");
         pin_field = new JTextField("Enter your pin");
 
@@ -120,6 +119,7 @@ public class Login extends JFrame {
         pin_field.setBounds(200, HEIGHT / 2 - 100, 150, 30);
 
         title.setBounds(80, HEIGHT / 2 - 175, WIDTH, 50);
+        title.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
 
         login.setBounds(WIDTH / 2 - 50, HEIGHT / 2 - 50, 100, 50);
         register.setBounds(WIDTH / 2 - 50, HEIGHT / 2 + 25, 100, 50);

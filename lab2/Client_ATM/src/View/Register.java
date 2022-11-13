@@ -109,15 +109,13 @@ public class Register extends JFrame {
         pin_field = new JTextField("Enter your pin");
         name_field = new JTextField("Enter your name");
 
-        title.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
         title.setBounds(80, HEIGHT / 2 - 175, WIDTH, 50);
-
+        title.setFont(new Font("Arial", Font.CENTER_BASELINE, 20));
 
         id_field.setBounds(30, HEIGHT / 2 - 100, 150, 30);
         pin_field.setBounds(200, HEIGHT / 2 - 100, 150, 30);
         name_field.setBounds(WIDTH / 2 - 75, HEIGHT / 2 - 50, 150, 30);
 
-        title.setBounds(WIDTH / 2 - 70, HEIGHT / 2 - 200, 200, 50);
         register.setBounds(WIDTH / 2 - 50, HEIGHT / 2 + 25, 100, 50);
         back.setBounds(WIDTH / 2 - 50, HEIGHT / 2 + 90, 100, 50);
 

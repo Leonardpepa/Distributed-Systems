@@ -45,7 +45,7 @@ public class HomeWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // create the logout request so the server know to delete your id
-                Request request = Request.createLogoutReuest();
+                Request request = Request.createLogoutRequest();
                 try {
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
