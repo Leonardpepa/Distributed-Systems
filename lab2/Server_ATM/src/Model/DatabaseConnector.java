@@ -11,7 +11,7 @@ public class DatabaseConnector {
     public DatabaseConnector(String databaseName) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/" + databaseName + "?user=root&password=root");
+            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://database:3306/" + databaseName, "root", "root");
         } catch (SQLException e) {
             System.err.println("Error with sql server please check if sql server is up!");
             try {
@@ -29,18 +29,26 @@ public class DatabaseConnector {
         Connection dbConnection = null;
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            dbConnection = DriverManager.getConnection("jdbc:mariadb://mariadb-server:3306/?user=root&password=root");
+
+            dbConnection = DriverManager.getConnection("jdbc:mariadb://database:3306/", "root", "root");
             Statement statement = dbConnection.createStatement();
             statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + tableName);
             statement.executeQuery("CREATE TABLE IF NOT EXISTS " + tableName + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
+
+            System.out.println("Database server started successfully");
         } catch (SQLException e) {
-            e.printStackTrace();
-            System.err.println("Error with sql server please check if sql server is up!");
-            System.exit(1);
+            try {
+                System.out.println("Waiting for database server to start please dont close the app");
+                Thread.sleep(5000);
+                initDB("bank");
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             try {
+                if (dbConnection == null) return;
                 dbConnection.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
