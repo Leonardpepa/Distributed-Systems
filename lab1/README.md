@@ -70,7 +70,7 @@ class Account {
 ```java 
 class DB_Service {
 
-    connection = DB_Connector.getConnevntion();
+    connection = DB_Connector.getConnection();
 
     Account Create (id, pin, name){
         account = INSERT TO ACCOUNT VALUES (id, pin, name, 0)
