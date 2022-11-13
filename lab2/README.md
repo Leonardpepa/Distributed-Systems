@@ -17,7 +17,7 @@
 ## How to run
 
 ### STEP 1 Run the Server
-* ***Be sure you are in the lab2/ folder***
+* ***Be sure you are inside the lab2/ folder***
 Open a terminal and run: <br>
 ```terminal
     docker compose up
