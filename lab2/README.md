@@ -38,5 +38,5 @@ to run the client you have 2 options
     ```
     - run:  
     ```terminal
-       cd Client_ATM/src javac *.java && java Main
+       javac *.java && java Main
     ```
