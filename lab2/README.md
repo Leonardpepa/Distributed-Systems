@@ -14,9 +14,9 @@
 * Client
     - java 8 or higher
 
-## How to run
+# How to run
 
-### STEP 1 Run the Server
+## STEP 1 Run the Server
 * ***Be sure you are inside the lab2/ folder***
 Open a terminal and run: <br>
 ```terminal
@@ -26,12 +26,12 @@ Open a terminal and run: <br>
 ***then you can proceed to step 2*** <br>
 * ***The first time the initialization will take some time, please wait until the server and database are started***
 
-### STEP 2 Run the Client
+## STEP 2 Run the Client
 To run the client you have 2 options
-* run via the Intellij IDE
+1. run via the Intellij IDE
     - open the Client_ATM as project in intellij and run the Main.java
-* run via terminal
-    - navigate to Client_ATM/src with
+2. run via terminal
+    - navigate to Client_ATM/src with:
     ```terminal
         cd Client_ATM/src
     ```
