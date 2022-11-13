@@ -25,35 +25,45 @@ public class DatabaseConnector {
         }
     }
 
-    public static void initDB(String tableName) {
-        Connection dbConnection = null;
+    public static void initDB(String dbName, int numberOfTries) {
+        Connection conn = null;
         try {
             Class.forName("org.mariadb.jdbc.Driver");
 
-            dbConnection = DriverManager.getConnection("jdbc:mariadb://database:3306/", "root", "root");
-            Statement statement = dbConnection.createStatement();
-            statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + tableName);
-            statement.executeQuery("CREATE TABLE IF NOT EXISTS " + tableName + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
+            conn = DriverManager.getConnection("jdbc:mariadb://database:3306/", "root", "root");
+            executeInitializationStatments(conn, dbName);
 
-            System.out.println("Database server started successfully");
         } catch (SQLException e) {
+            if (numberOfTries >= 5) {
+                System.err.println("Error | Timeout trying to connect to the database");
+                return;
+            }
+
             try {
-                System.out.println("Waiting for database server to start please dont close the app");
-                Thread.sleep(5000);
-                initDB("bank");
+                Thread.sleep(2000);
+                initDB("bank", numberOfTries + 1);
             } catch (InterruptedException ex) {
                 throw new RuntimeException(ex);
             }
+
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } finally {
             try {
-                if (dbConnection == null) return;
-                dbConnection.close();
+                if (conn == null) return;
+                conn.close();
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         }
+    }
+
+    public static void executeInitializationStatments(Connection conn, String dbName) throws SQLException {
+        Statement statement = conn.createStatement();
+        statement.executeQuery("CREATE DATABASE IF NOT EXISTS " + dbName);
+        statement.executeQuery("CREATE TABLE IF NOT EXISTS " + dbName + ".`account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL );");
+
+        System.out.println("Database server started successfully");
     }
 
     public Connection getDbConnection() {

@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 services:
   database:
     container_name: database
@@ -6,20 +6,25 @@ services:
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: root
-      MARIADB_DATABASE: bank
     ports:
       - "3306:3306"
-    expose:
-      - 3306
-
+    healthcheck:
+      test: [ 'CMD', 'mysqladmin', 'ping', '-u', 'root', '-proot' ]
+      interval: 1m
+      timeout: 10s
+      retries: 5
+  
   server:
     container_name: server
+    depends_on:
+      database:
+        condition: service_healthy
+    links:
+      - database
     build:
       context: ./Server_ATM
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    depends_on:
-      - database
     expose:
       - 8080

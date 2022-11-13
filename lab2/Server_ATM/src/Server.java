@@ -18,7 +18,7 @@ public class Server {
         this.PORT = port;
         try {
             // make sure that database and table exist
-            DatabaseConnector.initDB("bank");
+            DatabaseConnector.initDB("bank", 0);
             server = new ServerSocket(this.PORT);
             locks = new ConcurrentHashMap<>();
         } catch (IOException e) {
@@ -29,7 +29,7 @@ public class Server {
     public Server() {
         try {
             // make sure that database and table exist
-            DatabaseConnector.initDB("bank");
+            DatabaseConnector.initDB("bank", 0);
             server = new ServerSocket(this.PORT);
             locks = new ConcurrentHashMap<>();
         } catch (IOException e) {
