@@ -22,7 +22,7 @@ Open a terminal and run: <br>
 ```terminal
     docker compose up
 ```
-* ***When the server is ready you will see the message: server is listening in port 8080*** <br>
+* ***When the server is ready you will see the message: server is listening on port 8080*** <br>
 ***then you can proceed to step 2*** <br>
 * ***The first time the initialization will take some time, please wait until the server and database are started***
 
