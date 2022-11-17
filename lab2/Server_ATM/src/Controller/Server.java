@@ -1,7 +1,5 @@
 package Controller;
 
-import Controller.ServerProtocolImpl;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -13,16 +11,21 @@ public class Server {
     private static final int PORT = Registry.REGISTRY_PORT;
 
     public static ConcurrentHashMap<Integer, ReentrantReadWriteLock> clientLocks;
+
     public Server() throws RemoteException {
         clientLocks = new ConcurrentHashMap<>();
+
         System.setProperty("java.rmi.server.hostname", HOST);
-        ServerProtocolImpl serverApi = new ServerProtocolImpl();
         Registry registry = LocateRegistry.createRegistry(PORT);
+
         String remoteObjectName = "ATM_API";
+        ServerProtocolImpl serverApi = new ServerProtocolImpl();
         registry.rebind(remoteObjectName, serverApi);
+
         System.out.println("Controller.Server listening on port " + PORT);
     }
-    public static void addClientLock(int id){
+
+    public static void addClientLock(int id) {
         clientLocks.putIfAbsent(id, new ReentrantReadWriteLock());
     }
 

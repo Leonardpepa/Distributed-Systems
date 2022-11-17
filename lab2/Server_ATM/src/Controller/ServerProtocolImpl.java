@@ -9,7 +9,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 
 public class ServerProtocolImpl extends UnicastRemoteObject implements API {
-    private AccountRepository service;
+    private final AccountRepository service;
+
     public ServerProtocolImpl() throws RemoteException {
         super();
         DatabaseConnector connector = new DatabaseConnector("bank");
@@ -19,6 +20,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public Response authenticate(Request authRequest) throws RemoteException {
         Account acc = service.auth(authRequest.getId(), authRequest.getPin());
@@ -45,7 +47,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
                 return Response.createGeneralErrorResponse("Account creation failed please try again");
             }
             return Response.createGeneralSuccessResponse();
-        }finally {
+        } finally {
             Server.unlockWrite(registerRequest.getId());
         }
     }
@@ -71,7 +73,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
                 return Response.createGeneralErrorResponse("Deposit failed");
             }
             return Response.createGeneralSuccessResponse();
-        }finally {
+        } finally {
             Server.unlockWrite(depositRequest.getId());
         }
     }
@@ -99,7 +101,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
             }
 
             return Response.createGeneralSuccessResponse();
-        }finally {
+        } finally {
             Server.unlockWrite(withdrawRequest.getId());
         }
     }
@@ -113,7 +115,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
                 return Response.createGeneralErrorResponse("Controller.Server error");
             }
             return Response.createCheckBalanceResponse(account.getBalance());
-        }finally {
+        } finally {
             Server.unlockRead(balanceRequest.getId());
         }
     }
