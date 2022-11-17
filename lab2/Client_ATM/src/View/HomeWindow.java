@@ -77,6 +77,7 @@ public class HomeWindow extends JFrame {
                         JOptionPane.showMessageDialog(HomeWindow.this, "The amount to deposit cannot be negative");
                         return;
                     }
+
                     Request request = Request.createDepositRequest(id, amount);
 
                     Response response = api.deposit(request);
@@ -104,10 +105,12 @@ public class HomeWindow extends JFrame {
                 }
                 if (answer.isEmpty() || answer.isBlank()) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The amount to withdraw cannot be empty");
+                    return;
                 }
 
                 try {
                     double amount = Double.parseDouble(answer);
+
                     if (amount < 0){
                         JOptionPane.showMessageDialog(HomeWindow.this, "The amount to withdraw cannot be negative");
                         return;
