@@ -55,7 +55,7 @@ public class Login extends JFrame {
                     Request request = Request.createAuthRequest(id, pin);
 
                     try {
-                        // send the request to the server and et the response
+                        // send the request to the server and wait the response
                         Response response = api.authenticate(request);
 
                         // if response is successful login else show message to the user

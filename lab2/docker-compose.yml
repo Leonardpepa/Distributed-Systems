@@ -10,9 +10,10 @@ services:
       - "3306:3306"
     healthcheck:
       test: [ 'CMD', 'mysqladmin', 'ping', '-u', 'root', '-proot' ]
-      interval: 1m
+      interval: 10s
       timeout: 10s
       retries: 5
+      start_period: 10s
   
   server:
     container_name: server
@@ -25,6 +26,6 @@ services:
       context: ./Server_ATM
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - "1099:1099"
     expose:
       - 8080
