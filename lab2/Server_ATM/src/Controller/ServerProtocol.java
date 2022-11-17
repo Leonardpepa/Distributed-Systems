@@ -117,8 +117,9 @@ public class ServerProtocol {
 
         try {
             double amountToWithdraw = request.getAmount();
-            if (amountToWithdraw == 0) {
-                return Response.createGeneralErrorResponse("The amount cannot be 0");
+
+            if (amountToWithdraw <= 0) {
+                return Response.createGeneralErrorResponse("The amount cannot be <= 0");
             }
 
             Account accountFound = service.read(request.getId());

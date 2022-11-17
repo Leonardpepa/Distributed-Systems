@@ -109,6 +109,11 @@ public class HomeWindow extends JFrame {
 
                 try {
                     double amount = Double.parseDouble(answer);
+
+                    if (amount < 0){
+                        JOptionPane.showMessageDialog(HomeWindow.this, "The amount to withdraw cannot be negative");
+                    }
+
                     Request request = Request.createWithdrawRequest(amount);
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
