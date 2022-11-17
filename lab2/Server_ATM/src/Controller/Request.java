@@ -2,9 +2,9 @@ package Controller;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
 
-public class Request extends UnicastRemoteObject implements Serializable {
+public class Request implements Serializable {
+    private static final long serialVersionUID = 20120731125400L;
     private RequestType type;
     private int id;
     private int pin;

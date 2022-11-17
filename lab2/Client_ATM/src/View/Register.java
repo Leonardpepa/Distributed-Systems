@@ -1,5 +1,6 @@
 package View;
 
+import Controller.API;
 import Controller.Request;
 import Controller.Response;
 
@@ -8,37 +9,24 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.rmi.RemoteException;
 
 public class Register extends JFrame {
 
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
-    private final Socket clientSocket;
-    private final ObjectInputStream input;
-    private final ObjectOutputStream output;
+    API api;
     private JPanel panel;
     private JButton register;
     private JLabel title;
-
     private JTextField id_field;
-
     private JTextField pin_field;
-
     private JTextField name_field;
     private JButton back;
 
     // get the socket connection and the input stream already connected
-    public Register(Socket socket, ObjectInputStream input, ObjectOutputStream output, JFrame parentFrame) {
-
-        clientSocket = socket;
-        ObjectOutputStream clientOutputStream = output;
-        ObjectInputStream clientInputStream = input;
-        this.input = clientInputStream;
-        this.output = clientOutputStream;
-
+    public Register(API api, JFrame parentFrame) {
+        this.api = api;
         setUpGUI(parentFrame);
 
         // navigate to Login window
@@ -73,8 +61,8 @@ public class Register extends JFrame {
 
                     // send request to the server and wait for the response
                     try {
-                        output.writeObject(request);
-                        Response response = (Response) input.readObject();
+
+                        Response response = api.register(request);
 
                         // if the request is successful then we navigate back to the login screen
                         if (response.isOk()) {
@@ -86,12 +74,11 @@ public class Register extends JFrame {
                         }
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(Register.this, "Something went wrong please reopen the app and try again");
-                    } catch (ClassNotFoundException ex) {
-                        JOptionPane.showMessageDialog(Register.this, "Something went wrong please reopen the app and try again");
                     }
-
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(Register.this, "Something went wrong please try again");
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });

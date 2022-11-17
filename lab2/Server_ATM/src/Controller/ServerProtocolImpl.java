@@ -8,7 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.SQLException;
 
-public class ServerProtocolImpl extends UnicastRemoteObject implements IServerProtocol {
+public class ServerProtocolImpl extends UnicastRemoteObject implements API {
     private AccountRepository service;
     public ServerProtocolImpl() throws RemoteException {
         super();
@@ -19,7 +19,6 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements IServerPr
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public Response authenticate(Request authRequest) throws RemoteException {
         Account acc = service.auth(authRequest.getId(), authRequest.getPin());

@@ -3,7 +3,7 @@ package Controller;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface IServerProtocol extends Remote {
+public interface API extends Remote {
     Response authenticate(Request authRequest) throws RemoteException;
 
     Response register(Request registerRequest) throws RemoteException;

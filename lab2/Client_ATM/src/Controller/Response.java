@@ -1,9 +1,9 @@
 package Controller;
 
 import java.io.Serializable;
-
+import java.rmi.RemoteException;
 public class Response implements Serializable {
-
+    private static final long serialVersionUID = 20120731135400L;
     private int id;
     private String name;
     private double balance;
@@ -11,18 +11,18 @@ public class Response implements Serializable {
     private String message;
     private boolean ok;
 
-    private Response() {
-
+    private Response() throws RemoteException {
+        super();
     }
 
-    public static Response createCheckBalanceResponse(double balance) {
+    public static Response createCheckBalanceResponse(double balance) throws RemoteException {
         Response checkResponse = new Response();
         checkResponse.setBalance(balance);
         checkResponse.setOk(true);
         return checkResponse;
     }
 
-    public static Response createAuthSuccessResponse(int id, String name) {
+    public static Response createAuthSuccessResponse(int id, String name) throws RemoteException {
         Response authSuccessResponse = new Response();
         authSuccessResponse.setId(id);
         authSuccessResponse.setName(name);
@@ -30,13 +30,13 @@ public class Response implements Serializable {
         return authSuccessResponse;
     }
 
-    public static Response createGeneralSuccessResponse() {
+    public static Response createGeneralSuccessResponse() throws RemoteException {
         Response ok = new Response();
         ok.setOk(true);
         return ok;
     }
 
-    public static Response createGeneralErrorResponse(String message) {
+    public static Response createGeneralErrorResponse(String message) throws RemoteException {
         Response error = new Response();
         error.setOk(false);
         error.setMessage(message);
