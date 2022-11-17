@@ -29,17 +29,19 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
             return Response.createGeneralErrorResponse("Authentication failed");
         }
         Server.addClientLock(acc.getId());
+        System.out.println("Client with id " + authRequest.getId() + " Logged in");
+
         return Response.createAuthSuccessResponse(acc.getId(), acc.getName());
     }
 
     @Override
     public Response register(Request registerRequest) throws RemoteException {
+        System.out.println("- Id " + registerRequest.getId() + " Create account -");
         Account foundAccount = service.read(registerRequest.getId());
-
-        if (foundAccount != null) {
-            return Response.createGeneralErrorResponse("Account already exists");
-        }
         try {
+            if (foundAccount != null) {
+                return Response.createGeneralErrorResponse("Account already exists");
+            }
             Server.lockWrite(registerRequest.getId());
             Account account = new Account(registerRequest.getId(), registerRequest.getPin(), registerRequest.getName(), 0);
 
@@ -54,6 +56,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
 
     @Override
     public Response deposit(Request depositRequest) throws RemoteException {
+        System.out.println("- Id " + depositRequest.getId() + " Deposit " + depositRequest.getAmount() + " -");
         try {
             Server.lockWrite(depositRequest.getId());
             double amountToDeposit = depositRequest.getAmount();
@@ -80,6 +83,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
 
     @Override
     public Response withdraw(Request withdrawRequest) throws RemoteException {
+        System.out.println("- Id " + withdrawRequest.getId() + " Withdraw " + withdrawRequest.getAmount() + " -");
         try {
             double amountToWithdraw = withdrawRequest.getAmount();
             if (amountToWithdraw == 0) {
@@ -108,6 +112,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
 
     @Override
     public Response balance(Request balanceRequest) throws RemoteException {
+        System.out.println("- Id " + balanceRequest.getId() + " Check Balance -");
         try {
             Server.lockRead(balanceRequest.getId());
             Account account = service.read(balanceRequest.getId());
@@ -122,6 +127,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
 
     @Override
     public Response logout(Request logoutRequest) throws RemoteException {
+        System.out.println("Client with id " + logoutRequest.getId() + " logged out");
         Response response = Response.createGeneralSuccessResponse();
         return response;
     }
