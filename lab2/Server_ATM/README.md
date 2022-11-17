@@ -1,8 +1,8 @@
-# Server side for Pamak Bank ATM
+# Controller.Server side for Pamak Bank ATM
 
 ## Business Logic
 The components that are responsible for the business logic are under the Controller package
-* Server
+* Controller.Server
 * ControllerThread
 * ServerProtocol
 * RequestType

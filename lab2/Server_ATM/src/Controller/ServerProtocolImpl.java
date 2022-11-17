@@ -26,7 +26,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
         if (acc == null) {
             return Response.createGeneralErrorResponse("Authentication failed");
         }
-
+        Server.addClientLock(acc.getId());
         return Response.createAuthSuccessResponse(acc.getId(), acc.getName());
     }
 
@@ -37,70 +37,85 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
         if (foundAccount != null) {
             return Response.createGeneralErrorResponse("Account already exists");
         }
+        try {
+            Server.lockWrite(registerRequest.getId());
+            Account account = new Account(registerRequest.getId(), registerRequest.getPin(), registerRequest.getName(), 0);
 
-        Account account = new Account(registerRequest.getId(), registerRequest.getPin(), registerRequest.getName(), 0);
-
-        if (service.create(account) == null) {
-            return Response.createGeneralErrorResponse("Account creation failed please try again");
+            if (service.create(account) == null) {
+                return Response.createGeneralErrorResponse("Account creation failed please try again");
+            }
+            return Response.createGeneralSuccessResponse();
+        }finally {
+            Server.unlockWrite(registerRequest.getId());
         }
-        return Response.createGeneralSuccessResponse();
-
     }
 
     @Override
     public Response deposit(Request depositRequest) throws RemoteException {
-        double amountToDeposit = depositRequest.getAmount();
+        try {
+            Server.lockWrite(depositRequest.getId());
+            double amountToDeposit = depositRequest.getAmount();
 
-        if (amountToDeposit == 0) {
-            return Response.createGeneralErrorResponse("The amount cannot be 0");
+            if (amountToDeposit <= 0) {
+                return Response.createGeneralErrorResponse("The amount cannot be <0");
+            }
+            Account accountFound = service.read(depositRequest.getId());
+
+            if (accountFound == null) {
+                return Response.createGeneralErrorResponse("There was an error with the request");
+            }
+
+            accountFound.deposit(amountToDeposit);
+
+            if (service.update(accountFound) == null) {
+                return Response.createGeneralErrorResponse("Deposit failed");
+            }
+            return Response.createGeneralSuccessResponse();
+        }finally {
+            Server.unlockWrite(depositRequest.getId());
         }
-        Account accountFound = service.read(depositRequest.getId());
-
-        if (accountFound == null) {
-            return Response.createGeneralErrorResponse("There was an error with the request");
-        }
-
-        accountFound.deposit(amountToDeposit);
-
-        if (service.update(accountFound) == null) {
-            return Response.createGeneralErrorResponse("Deposit failed");
-        }
-        return Response.createGeneralSuccessResponse();
-
     }
 
     @Override
     public Response withdraw(Request withdrawRequest) throws RemoteException {
-        double amountToWithdraw = withdrawRequest.getAmount();
-        if (amountToWithdraw == 0) {
-            return Response.createGeneralErrorResponse("The amount cannot be 0");
+        try {
+            double amountToWithdraw = withdrawRequest.getAmount();
+            if (amountToWithdraw == 0) {
+                return Response.createGeneralErrorResponse("The amount cannot be 0");
+            }
+
+            Account accountFound = service.read(withdrawRequest.getId());
+            if (accountFound == null) {
+                return Response.createGeneralErrorResponse("There was an error with the request");
+            }
+
+            if (accountFound.getBalance() - amountToWithdraw < 0) {
+                return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
+            }
+
+            accountFound.withdraw(amountToWithdraw);
+            if (service.update(accountFound) == null) {
+                return Response.createGeneralErrorResponse("Withdrawal failed");
+            }
+
+            return Response.createGeneralSuccessResponse();
+        }finally {
+            Server.unlockWrite(withdrawRequest.getId());
         }
-
-        Account accountFound = service.read(withdrawRequest.getId());
-        if (accountFound == null) {
-            return Response.createGeneralErrorResponse("There was an error with the request");
-        }
-
-        if (accountFound.getBalance() - amountToWithdraw < 0) {
-            return Response.createGeneralErrorResponse("Balance is not enough Withdrawal failed");
-        }
-
-        accountFound.withdraw(amountToWithdraw);
-        if (service.update(accountFound) == null) {
-            return Response.createGeneralErrorResponse("Withdrawal failed");
-        }
-
-        return Response.createGeneralSuccessResponse();
-
     }
 
     @Override
     public Response balance(Request balanceRequest) throws RemoteException {
-        Account account = service.read(balanceRequest.getId());
-        if (account == null) {
-            return Response.createGeneralErrorResponse("Server error");
+        try {
+            Server.lockRead(balanceRequest.getId());
+            Account account = service.read(balanceRequest.getId());
+            if (account == null) {
+                return Response.createGeneralErrorResponse("Controller.Server error");
+            }
+            return Response.createCheckBalanceResponse(account.getBalance());
+        }finally {
+            Server.unlockRead(balanceRequest.getId());
         }
-        return Response.createCheckBalanceResponse(account.getBalance());
     }
 
     @Override

@@ -1,3 +1,4 @@
+import Controller.Server;
 import Model.DatabaseConnector;
 
 import java.rmi.RemoteException;
