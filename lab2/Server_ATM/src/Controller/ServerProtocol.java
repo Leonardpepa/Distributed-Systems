@@ -91,8 +91,8 @@ public class ServerProtocol {
         try {
             double amountToDeposit = request.getAmount();
 
-            if (amountToDeposit == 0) {
-                return Response.createGeneralErrorResponse("The amount cannot be 0");
+            if (amountToDeposit <= 0) {
+                return Response.createGeneralErrorResponse("The amount cannot be <= 0");
             }
             Account accountFound = service.read(request.getId());
 

@@ -73,9 +73,14 @@ public class HomeWindow extends JFrame {
                 }
                 if (answer.isEmpty() || answer.isBlank()) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The amount to deposit cannot be empty");
+                    return;
                 }
                 try {
                     double amount = Double.parseDouble(answer);
+                    if (amount <= 0){
+                        JOptionPane.showMessageDialog(HomeWindow.this, "The amount to deposit cannot be negative");
+                        return;
+                    }
                     Request request = Request.createDepositRequest(amount);
                     output.writeObject(request);
                     Response response = (Response) input.readObject();
