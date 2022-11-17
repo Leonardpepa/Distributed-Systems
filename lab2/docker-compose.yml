@@ -10,9 +10,10 @@ services:
       - "3306:3306"
     healthcheck:
       test: [ 'CMD', 'mysqladmin', 'ping', '-u', 'root', '-proot' ]
-      interval: 1m
+      interval: 10s
       timeout: 10s
       retries: 5
+      start_period: 10s
   
   server:
     container_name: server
