@@ -11,7 +11,7 @@ public class DatabaseConnector {
     public DatabaseConnector(String databaseName) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://database:3306/" + databaseName, "root", "root");
+            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/" + databaseName, "root", "");
         } catch (SQLException e) {
             System.err.println("Error with sql server please check if sql server is up!");
             try {
@@ -30,7 +30,7 @@ public class DatabaseConnector {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
 
-            conn = DriverManager.getConnection("jdbc:mariadb://database:3306/", "root", "root");
+            conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/", "root", "");
             executeInitializationStatments(conn, dbName);
 
         } catch (SQLException e) {
