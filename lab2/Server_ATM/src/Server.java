@@ -9,12 +9,11 @@ public class Server {
     private static final int PORT = Registry.REGISTRY_PORT;
     public Server() throws RemoteException {
         System.setProperty("java.rmi.server.hostname", HOST);
-
         ServerProtocolImpl serverApi = new ServerProtocolImpl();
         Registry registry = LocateRegistry.createRegistry(PORT);
         String remoteObjectName = "ATM_API";
         registry.rebind(remoteObjectName, serverApi);
-        System.out.println("Server Started");
+        System.out.println("Server listening on port " + PORT);
     }
 
 }
