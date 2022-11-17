@@ -11,7 +11,7 @@ public class DatabaseConnector {
     public DatabaseConnector(String databaseName) {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/" + databaseName, "root", "");
+            this.dbConnection = DriverManager.getConnection("jdbc:mariadb://database:3306/" + databaseName, "root", "root");
         } catch (SQLException e) {
             System.err.println("Error with sql server please check if sql server is up!");
             try {
@@ -30,7 +30,7 @@ public class DatabaseConnector {
         try {
             Class.forName("org.mariadb.jdbc.Driver");
 
-            conn = DriverManager.getConnection("jdbc:mariadb://localhost:3306/", "root", "");
+            conn = DriverManager.getConnection("jdbc:mariadb://database:3306/", "root", "root");
             executeInitializationStatments(conn, dbName);
 
         } catch (SQLException e) {
@@ -38,7 +38,7 @@ public class DatabaseConnector {
                 System.err.println("Error | Timeout trying to connect to the database");
                 return;
             }
-
+            System.out.println("Trying to connect to database | TRY: " + numberOfTries);
             try {
                 Thread.sleep(2000);
                 initDB("bank", numberOfTries + 1);
