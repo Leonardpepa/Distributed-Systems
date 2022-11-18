@@ -26,6 +26,6 @@ services:
       context: ./Server_ATM
       dockerfile: Dockerfile
     ports:
-      - "1099:1099"
+      - "8080:8080"
     expose:
       - 8080

@@ -1,6 +1,5 @@
 package View;
 
-import Controller.API;
 import Controller.Request;
 import Controller.Response;
 
@@ -9,13 +8,18 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.rmi.RemoteException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class HomeWindow extends JFrame {
 
 
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
+    private final Socket clientSocket;
+    private final ObjectInputStream input;
+    private final ObjectOutputStream output;
     private final int id;
     private final String name;
     private JPanel panel;
@@ -27,21 +31,24 @@ public class HomeWindow extends JFrame {
     private JPanel header;
 
     private JLabel welcome;
-    private API api;
-    public HomeWindow(API api, int id, String name, JFrame parentFrame) {
+
+    public HomeWindow(Socket clientSocket, ObjectInputStream input, ObjectOutputStream output, int id, String name, JFrame parentFrame) {
+        this.clientSocket = clientSocket;
+        this.input = input;
+        this.output = output;
         this.id = id;
         this.name = name;
-        this.api = api;
+
         setUpGUI(parentFrame);
 
         exit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // create the logout request so the server know to delete your id
-                Request request = Request.createLogoutRequest(id);
-
+                Request request = Request.createLogoutRequest();
                 try {
-                    Response response = api.logout(request);
+                    output.writeObject(request);
+                    Response response = (Response) input.readObject();
                     if (response.isOk()) {
                         dispose();
                         parentFrame.setVisible(true);
@@ -49,6 +56,8 @@ public class HomeWindow extends JFrame {
                         JOptionPane.showMessageDialog(HomeWindow.this, "An error occurred please try again");
                     }
                 } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
+                } catch (ClassNotFoundException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
@@ -72,10 +81,9 @@ public class HomeWindow extends JFrame {
                         JOptionPane.showMessageDialog(HomeWindow.this, "The amount to deposit cannot be negative");
                         return;
                     }
-
-                    Request request = Request.createDepositRequest(id, amount);
-
-                    Response response = api.deposit(request);
+                    Request request = Request.createDepositRequest(amount);
+                    output.writeObject(request);
+                    Response response = (Response) input.readObject();
 
                     if (response.isOk()) {
                         JOptionPane.showMessageDialog(HomeWindow.this, "You deposit " + amount + " successful");
@@ -86,6 +94,8 @@ public class HomeWindow extends JFrame {
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The input must be a number");
                 } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
+                } catch (ClassNotFoundException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
@@ -100,7 +110,6 @@ public class HomeWindow extends JFrame {
                 }
                 if (answer.isEmpty() || answer.isBlank()) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The amount to withdraw cannot be empty");
-                    return;
                 }
 
                 try {
@@ -108,11 +117,11 @@ public class HomeWindow extends JFrame {
 
                     if (amount < 0){
                         JOptionPane.showMessageDialog(HomeWindow.this, "The amount to withdraw cannot be negative");
-                        return;
                     }
-                    Request request = Request.createWithdrawRequest(id, amount);
-                    Response response = api.withdraw(request);
 
+                    Request request = Request.createWithdrawRequest(amount);
+                    output.writeObject(request);
+                    Response response = (Response) input.readObject();
                     if (response.isOk()) {
                         JOptionPane.showMessageDialog(HomeWindow.this, "Withdrawal " + amount + " successful");
                     } else {
@@ -122,6 +131,8 @@ public class HomeWindow extends JFrame {
                     JOptionPane.showMessageDialog(HomeWindow.this, "The input must be a number");
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }
         });
@@ -130,14 +141,16 @@ public class HomeWindow extends JFrame {
         balance.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Request request = Request.createCheckBalanceRequest(id);
-
+                Request request = Request.createCheckBalanceRequest();
                 try {
-                    Response response = api.balance(request);
+                    output.writeObject(request);
+                    Response response = (Response) input.readObject();
                     if (response.isOk()) {
                         JOptionPane.showMessageDialog(HomeWindow.this, "Your balance is: " + response.getBalance());
                     }
                 } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
+                } catch (ClassNotFoundException ex) {
                     JOptionPane.showMessageDialog(HomeWindow.this, "Something went wrong please reopen the app and try again");
                 }
             }

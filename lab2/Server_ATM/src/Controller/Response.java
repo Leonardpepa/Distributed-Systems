@@ -11,6 +11,7 @@ public class Response implements Serializable {
     private boolean ok;
 
     private Response() {
+
     }
 
     public static Response createCheckBalanceResponse(double balance) {

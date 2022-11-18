@@ -1,6 +1,5 @@
 package View;
 
-import Controller.API;
 import Controller.Request;
 import Controller.Response;
 
@@ -8,15 +7,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.rmi.NotBoundException;
-import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
 
 public class Login extends JFrame {
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
+    private Socket clientSocket;
+    private ObjectInputStream input;
+    private ObjectOutputStream output;
     private JPanel panel;
     private JButton login;
     private JButton register;
@@ -26,13 +29,26 @@ public class Login extends JFrame {
 
     private JTextField pin_field;
 
-    private final int PORT = Registry.REGISTRY_PORT;
+    private final int PORT = 8080;
     private final String ADDRESS = "localhost";
-    private API api;
-    public Login() throws RemoteException, NotBoundException {
-        Registry registry = LocateRegistry.getRegistry(ADDRESS,PORT);
-        api = (API) registry.lookup("ATM_API");
-        setUpGUI();
+
+    public Login() {
+        // Connect to server and initialize the streams
+        try {
+            clientSocket = new Socket(ADDRESS, PORT);
+            ObjectOutputStream clientOutputStream = new ObjectOutputStream(clientSocket.getOutputStream());
+            ObjectInputStream clientInputStream = new ObjectInputStream(clientSocket.getInputStream());
+
+            this.input = clientInputStream;
+            this.output = clientOutputStream;
+
+            // set up the gui
+            setUpGUI();
+
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(Login.this, "Server is not responding");
+            System.exit(1);
+        }
 
         login.addActionListener(new ActionListener() {
             @Override
@@ -55,17 +71,19 @@ public class Login extends JFrame {
                     Request request = Request.createAuthRequest(id, pin);
 
                     try {
-                        // send the request to the server and wait the response
-                        Response response = api.authenticate(request);
-
+                        // send the request to the server and et the response
+                        output.writeObject(request);
+                        Response response = (Response) input.readObject();
                         // if response is successful login else show message to the user
                         if (response.isOk()) {
                             Login.this.setVisible(false);
-                            new HomeWindow(api, response.getId(), response.getName(), Login.this);
+                            new HomeWindow(clientSocket, input, output, response.getId(), response.getName(), Login.this);
                         } else {
                             JOptionPane.showMessageDialog(Login.this, response.getMessage());
                         }
                     } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(Login.this, "Something went wrong please reopen the app and try again");
+                    } catch (ClassNotFoundException ex) {
                         JOptionPane.showMessageDialog(Login.this, "Something went wrong please reopen the app and try again");
                     }
                 } catch (NumberFormatException ex) {
@@ -81,7 +99,7 @@ public class Login extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 // open register window
                 Login.this.setVisible(false);
-                new Register(api, Login.this);
+                new Register(clientSocket, input, output, Login.this);
             }
         });
 

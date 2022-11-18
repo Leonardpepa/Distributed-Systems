@@ -1,7 +1,6 @@
 package Controller;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 public class Request implements Serializable {
     private RequestType type;
@@ -14,10 +13,9 @@ public class Request implements Serializable {
 
     }
 
-    public static Request createLogoutRequest(int id) {
+    public static Request createLogoutRequest() {
         Request request = new Request();
         request.setType(RequestType.logout);
-        request.setId(id);
         return request;
     }
 
@@ -39,26 +37,23 @@ public class Request implements Serializable {
         return registerRequest;
     }
 
-    public static Request createCheckBalanceRequest(int id) {
+    public static Request createCheckBalanceRequest() {
         Request checkRequest = new Request();
         checkRequest.setType(RequestType.checkBalance);
-        checkRequest.setId(id);
         return checkRequest;
     }
 
-    public static Request createDepositRequest(int id, double balance) {
+    public static Request createDepositRequest(double balance) {
         Request depositRequest = new Request();
         depositRequest.setType(RequestType.deposit);
         depositRequest.setAmount(balance);
-        depositRequest.setId(id);
         return depositRequest;
     }
 
-    public static Request createWithdrawRequest(int id, double balance) {
+    public static Request createWithdrawRequest(double balance) {
         Request withdrawRequest = new Request();
         withdrawRequest.setType(RequestType.withdraw);
         withdrawRequest.setAmount(balance);
-        withdrawRequest.setId(id);
         return withdrawRequest;
     }
 
