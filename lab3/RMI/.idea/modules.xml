@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Client_ATM/Client_ATM.iml" filepath="$PROJECT_DIR$/Client_ATM/Client_ATM.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Server_ATM/Server_ATM.iml" filepath="$PROJECT_DIR$/Server_ATM/Server_ATM.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/lab2.iml" filepath="$PROJECT_DIR$/.idea/lab2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/RMI.iml" filepath="$PROJECT_DIR$/.idea/RMI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RMI_Client_ATM/RMI_Client_ATM.iml" filepath="$PROJECT_DIR$/RMI_Client_ATM/RMI_Client_ATM.iml" />
+      <module fileurl="file://$PROJECT_DIR$/RMI_Server_ATM/RMI_Server_ATM.iml" filepath="$PROJECT_DIR$/RMI_Server_ATM/RMI_Server_ATM.iml" />
     </modules>
   </component>
 </project>
