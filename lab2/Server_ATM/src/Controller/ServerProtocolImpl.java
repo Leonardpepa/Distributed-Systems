@@ -85,6 +85,7 @@ public class ServerProtocolImpl extends UnicastRemoteObject implements API {
     public Response withdraw(Request withdrawRequest) throws RemoteException {
         System.out.println("- Id " + withdrawRequest.getId() + " Withdraw " + withdrawRequest.getAmount() + " -");
         try {
+            Server.lockWrite(withdrawRequest.getId());
             double amountToWithdraw = withdrawRequest.getAmount();
             if (amountToWithdraw == 0) {
                 return Response.createGeneralErrorResponse("The amount cannot be 0");

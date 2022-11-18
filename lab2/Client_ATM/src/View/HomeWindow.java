@@ -38,14 +38,9 @@ public class HomeWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // create the logout request so the server know to delete your id
-                Request request = null;
-                try {
-                    request = Request.createLogoutRequest(id);
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
-                }
-                try {
+                Request request = Request.createLogoutRequest(id);
 
+                try {
                     Response response = api.logout(request);
                     if (response.isOk()) {
                         dispose();
@@ -135,12 +130,8 @@ public class HomeWindow extends JFrame {
         balance.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Request request = null;
-                try {
-                    request = Request.createCheckBalanceRequest(id);
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
-                }
+                Request request = Request.createCheckBalanceRequest(id);
+
                 try {
                     Response response = api.balance(request);
                     if (response.isOk()) {

@@ -1,28 +1,26 @@
 package Controller;
 
 import java.io.Serializable;
-import java.rmi.RemoteException;
 
 public class Request implements Serializable {
-    private static final long serialVersionUID = 20120731125400L;
     private RequestType type;
     private int id;
     private int pin;
     private double amount;
     private String name;
 
-    private Request() throws RemoteException {
-        super();
+    private Request() {
+
     }
 
-    public static Request createLogoutRequest(int id) throws RemoteException {
+    public static Request createLogoutRequest(int id) {
         Request request = new Request();
         request.setType(RequestType.logout);
         request.setId(id);
         return request;
     }
 
-    public static Request createAuthRequest(int id, int pin) throws RemoteException {
+    public static Request createAuthRequest(int id, int pin) {
         Request authRequest = new Request();
         authRequest.setType(RequestType.auth);
         authRequest.setId(id);
@@ -30,7 +28,7 @@ public class Request implements Serializable {
         return authRequest;
     }
 
-    public static Request createRegisterRequest(int id, int pin, String name, double balance) throws RemoteException {
+    public static Request createRegisterRequest(int id, int pin, String name, double balance) {
         Request registerRequest = new Request();
         registerRequest.setType(RequestType.register);
         registerRequest.setId(id);
@@ -40,14 +38,14 @@ public class Request implements Serializable {
         return registerRequest;
     }
 
-    public static Request createCheckBalanceRequest(int id) throws RemoteException {
+    public static Request createCheckBalanceRequest(int id) {
         Request checkRequest = new Request();
         checkRequest.setType(RequestType.checkBalance);
         checkRequest.setId(id);
         return checkRequest;
     }
 
-    public static Request createDepositRequest(int id, double balance) throws RemoteException {
+    public static Request createDepositRequest(int id, double balance) {
         Request depositRequest = new Request();
         depositRequest.setType(RequestType.deposit);
         depositRequest.setAmount(balance);
@@ -55,7 +53,7 @@ public class Request implements Serializable {
         return depositRequest;
     }
 
-    public static Request createWithdrawRequest(int id, double balance) throws RemoteException {
+    public static Request createWithdrawRequest(int id, double balance) {
         Request withdrawRequest = new Request();
         withdrawRequest.setType(RequestType.withdraw);
         withdrawRequest.setAmount(balance);

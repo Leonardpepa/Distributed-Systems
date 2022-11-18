@@ -28,7 +28,7 @@ public class Login extends JFrame {
 
     private final int PORT = Registry.REGISTRY_PORT;
     private final String ADDRESS = "localhost";
-    API api;
+    private API api;
     public Login() throws RemoteException, NotBoundException {
         Registry registry = LocateRegistry.getRegistry(ADDRESS,PORT);
         api = (API) registry.lookup("ATM_API");
@@ -71,8 +71,6 @@ public class Login extends JFrame {
                 } catch (NumberFormatException ex) {
                     // show message to the user if parsing the inputs failed
                     JOptionPane.showMessageDialog(Login.this, "Please fill all the fields");
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
                 }
             }
         });

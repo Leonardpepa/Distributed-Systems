@@ -10,7 +10,7 @@ public class Main {
             @Override
             public void run() {
                 try {
-                    new Login();
+                    Login login = new Login();
                 } catch (RemoteException e) {
                     JOptionPane.showMessageDialog(null, "Server is not responding");
                     System.exit(1);

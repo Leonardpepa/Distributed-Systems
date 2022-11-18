@@ -9,13 +9,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.rmi.RemoteException;
 
 public class Register extends JFrame {
 
     private static final int WIDTH = 400;
     private static final int HEIGHT = 400;
-    API api;
+    private API api;
     private JPanel panel;
     private JButton register;
     private JLabel title;
@@ -77,8 +76,6 @@ public class Register extends JFrame {
                     }
                 } catch (NumberFormatException ex) {
                     JOptionPane.showMessageDialog(Register.this, "Something went wrong please try again");
-                } catch (RemoteException ex) {
-                    throw new RuntimeException(ex);
                 }
             }
         });
