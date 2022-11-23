@@ -1,8 +1,7 @@
 import Pyro4
 import client_protocol
-def main():
-    atm_service = Pyro4.Proxy("PYRONAME:ATM_Service")
-    
+
+def client_loop(atm_service):
     authenticated = False
     id = -1
     name = ""
@@ -59,10 +58,12 @@ def main():
     while authenticated:
         print("-------------------")
         print("(1) Account info")
-        print("(2) Deposit")
-        print("(3) Withdraw")
-        print("(4) Balance")
-        print("(5) Logout")
+        print("(2) Statement info")
+        print("(3) Deposit")
+        print("(4) Withdraw")
+        print("(5) Balance")
+        print("(6) Transfer")
+        print("(7) Logout")
         print("(0) Exit Application")
         print("-------------------")
         
@@ -70,7 +71,15 @@ def main():
         
         if user_input == "1":
             print("----ACCOUNT INFO----")
-            client_protocol.handleInfo(atm_service)
+            client_protocol.handleInfo(atm_service, id)
+            # print("--------------------")
+            
+        if user_input == "2":
+            print("----STATEMENT INFO----")
+            client_protocol.get_statements(atm_service, id)
+            # print("--------------------")
+            
+        
         if user_input == "0":
             authenticated = False
             id = -1
@@ -78,26 +87,44 @@ def main():
             print("goodbye!")
             continue
         # Deposit routine
-        if user_input == "2":
+        if user_input == "3":
             print("----DEPOSIT----")
-            client_protocol.handleDeposit(atm_service)
+            client_protocol.handleDeposit(atm_service, id)
+            # print("---------------")
             
         # Withdraw routine
-        if user_input == "3":
-            print("----WITHDRAW----")
-            client_protocol.handleWithdraw(atm_service)
-        # Balance routine
         if user_input == "4":
-            print("----BALANCE----")
-            client_protocol.handleBalance(atm_service)  
+            print("----WITHDRAW----")
+            client_protocol.handleWithdraw(atm_service, id)
+            # print("----------------")
         
+        # Balance routine
         if user_input == "5":
+            print("----BALANCE----")
+            client_protocol.handleBalance(atm_service, id)  
+            # print("---------------")
+        
+        if user_input == "6":
+            print("----TRANFER----")
+            client_protocol.handleTransfer(atm_service, id)
+            # print("---------------")
+            
+        if user_input == "7":
             print("----LOGOUT----")
-            # ok, result = client_protocol.logout() 
-            # if ok:
-            #     id = -1
-            #     name = ""    
-            # print(result["message"])
+            ok, result = client_protocol.logout(atm_service, id)
+            if ok:
+                authenticated = False
+                id = -1
+                name = ""
+            print(result["message"]) 
+            client_loop(atm_service=atm_service)
+            # print("---------------")
+
+
+
+def main():
+    atm_service = Pyro4.Proxy("PYRONAME:ATM_Service")
+    client_loop(atm_service=atm_service)            
             
             
 if __name__ == "__main__":
