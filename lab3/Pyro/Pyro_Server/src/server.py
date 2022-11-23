@@ -8,7 +8,7 @@ def main():
     uri = daemon.register(ATM_Service)   # register the greeting maker as a Pyro object
     ns.register("ATM_Service", uri)   # register the object with a name in the name server
 
-    print("Server Ready To Welcome ne Clients.")
+    print("Server Is Ready To Welcome new Clients.")
     daemon.requestLoop()                   # start the event loop of the server to wait for calls
 
 if __name__ == "__main__":

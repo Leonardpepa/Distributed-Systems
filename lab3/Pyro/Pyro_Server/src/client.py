@@ -1,5 +1,5 @@
 import Pyro4
-        
+import client_protocol
 def main():
     atm_service = Pyro4.Proxy("PYRONAME:ATM_Service")
     
@@ -32,40 +32,25 @@ def main():
         # Login routine
         if user_input == "1":
             print("----LOGIN----")
-            try:
-                id = int(input("Enter your id: "))
-                password = int(input("Enter your password: "))
-                print("Loading...")
-                result = atm_service.auth(id=id, pin=password)
-                if result[0]:
-                    authenticated = True
-                    id = result[1]
-                    name = result[2]
-                    break
-                else:
-                    print(result[1])
-            except ValueError as error:
-                print("id and password need to be an integers please try again")
-                continue
+            ok, result = client_protocol.handleLogin(atm_service)
+            if ok:
+                id = result["id"]
+                name = result["name"]
+                authenticated = True
+            else:
+                print(result["message"])
+                
         # Register routine
         if user_input == "2":
             print("----Register----")
-            try:
-                id = int(input("Enter your id: "))
-                password = int(input("Enter your password: "))
-                name = input("Enter your name: ")
-                print("Loading...")
-                result = atm_service.create(id=id, pin=password, name=name)
-                if result[0]:
-                    authenticated = True
-                    id = result[1]
-                    name = result[2]
-                    break
-                else:
-                    print(result[1])
-            except ValueError as error:
-                print("id and password need to be an integers please try again")
-                continue
+            ok, result = client_protocol.handleRegister(atm_service)
+            if ok:
+                id = result["id"]
+                name = result["name"]
+                authenticated = True
+            else:
+                print(result["message"])
+            
             
     if authenticated:
         print("----MAIN PAGE----")
@@ -73,14 +58,19 @@ def main():
         
     while authenticated:
         print("-------------------")
-        print("(1) Deposit")
-        print("(2) Withdraw")
-        print("(3) Balance")
-        print("(0) Exit")
+        print("(1) Account info")
+        print("(2) Deposit")
+        print("(3) Withdraw")
+        print("(4) Balance")
+        print("(5) Logout")
+        print("(0) Exit Application")
         print("-------------------")
         
         user_input = input()[0]
         
+        if user_input == "1":
+            print("----ACCOUNT INFO----")
+            client_protocol.handleInfo(atm_service)
         if user_input == "0":
             authenticated = False
             id = -1
@@ -88,38 +78,27 @@ def main():
             print("goodbye!")
             continue
         # Deposit routine
-        if user_input == "1":
-            print("----DEPOSIT----")
-            try:
-                amount = float(input("Enter the amount your want to deposit: "))
-                result = atm_service.deposit(amount)
-                if result[0] == True:
-                    print("Deposit was successful. New Balance: ", result[1])
-                else:
-                    print(result[1])
-            except ValueError as error:
-                print("The amount needs be a number please try again")
-        # Withdraw routine
         if user_input == "2":
-            print("----WITHDRAW----")
-            try:
-                amount = float(input("Enter the amount your want to withdraw: "))
-                result = atm_service.withdraw(amount)
-                if result[0]:
-                    print("withdraw was successful. New Balance: ", result[1])
-                else:
-                    print(result[1])
-            except ValueError as error:
-                print("The amount needs be a number please try again")
-        # Balance routine
+            print("----DEPOSIT----")
+            client_protocol.handleDeposit(atm_service)
+            
+        # Withdraw routine
         if user_input == "3":
+            print("----WITHDRAW----")
+            client_protocol.handleWithdraw(atm_service)
+        # Balance routine
+        if user_input == "4":
             print("----BALANCE----")
-            result = atm_service.balance()    
-            if result[0]:
-                print("Your balance is: ", result[1])
-            else:
-                print(result[1])
+            client_protocol.handleBalance(atm_service)  
         
+        if user_input == "5":
+            print("----LOGOUT----")
+            # ok, result = client_protocol.logout() 
+            # if ok:
+            #     id = -1
+            #     name = ""    
+            # print(result["message"])
+            
             
 if __name__ == "__main__":
     main()
