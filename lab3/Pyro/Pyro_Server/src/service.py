@@ -4,8 +4,8 @@ import db
 import account_repository as acc_repo
 from account import Account
 from statement import Statement
-
-
+import utils
+import datetime
 
 @Pyro4.expose
 class ATM_Service(object):
@@ -31,6 +31,10 @@ class ATM_Service(object):
         ok, result = acc_repo.auth(cursor=self.cursor, id=id, pin=pin)
         if ok:
             self.id = result["id"]
+            ldate = result["date"]
+            if utils.day_passed(datetime.date.today(), ldate) >= 1:
+                acc_repo.update_daily_limit(self.cursor, id, 900)
+            
             return True, result
         
         return False, {"message": "Authentication failed"}
@@ -86,10 +90,13 @@ class ATM_Service(object):
         if not ok:
             return False, {"message": "An error occured please try again"}
         
+        if account["limit"] - amount < 0:
+            return False, {"message": "Daily limit is not enough for this transaction"}
+        
         if account["balance"] - amount < 0:
             return False, {"message": "Balance is not enough"}
         
-        newAcc = Account(account["id"], None, account["name"], account["balance"] - amount)
+        newAcc = Account(account["id"], None, account["name"], account["balance"] - amount, account["limit"] - amount)
 
         ok, result = acc_repo.update(self.cursor, newAcc)
         

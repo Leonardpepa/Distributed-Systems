@@ -76,7 +76,10 @@ def handleInfo(service, id: int):
     if ok:
         print("ID:", result["id"])
         print("Name:", result["name"])
-        print("Balance", result["balance"])
+        print("Balance:", result["balance"])
+        print("Daily Limit:", 900)
+        print("Daily limit left:", result["limit"])
+        print("Date for limit: ", result["date"])
     else:
         print(result["message"])
 

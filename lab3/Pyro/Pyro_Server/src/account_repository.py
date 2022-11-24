@@ -1,10 +1,11 @@
 import mariadb
 from account import Account
+import datetime
         
     
 def auth(cursor, id: int, pin: int) -> tuple[bool, any]:
     try:
-        cursor.execute("SELECT id, name FROM account WHERE id=? AND pin=?", [id, pin])
+        cursor.execute("SELECT `id`, `name`, `date` FROM account WHERE `id`=? AND `pin`=?", [id, pin])
         result = cursor.fetchone()
         if result is None:
             return False, None
@@ -15,7 +16,7 @@ def auth(cursor, id: int, pin: int) -> tuple[bool, any]:
 
 def create(cursor, acc: Account) -> bool:
     try:
-        cursor.execute("INSERT INTO account (id,pin,name,balance) VALUES (?, ?, ?, ?)", [acc.id, acc.pin, acc.name, 0])
+        cursor.execute("INSERT INTO `account`(`id`, `pin`, `name`, `balance`, `limit`) VALUES (?,?,?,?,?)", [acc.id, acc.pin, acc.name, 0, acc.limit])
         return cursor.rowcount >= 1
     except mariadb.Error as e:
         print(f"Error: {e}")
@@ -24,7 +25,7 @@ def create(cursor, acc: Account) -> bool:
 
 def read(cursor, id: int):
     try:
-        cursor.execute("SELECT id, name, balance FROM account WHERE id=?",  [id])
+        cursor.execute("SELECT `id`, `name`, `balance`, `limit`, `date` FROM `account` WHERE `id`=? ",  [id])
         result = cursor.fetchone()
         if result is None:
             return False, None
@@ -35,7 +36,7 @@ def read(cursor, id: int):
 
 def update(cursor, acc: Account):
     try:
-        cursor.execute("UPDATE account SET name=?, balance=? WHERE id=?", [acc.name, acc.balance, acc.id])
+        cursor.execute("UPDATE account SET `name`=?, `balance`=?, `limit`=? WHERE `id`=?", [acc.name, acc.balance, acc.limit, acc.id])
         if cursor.rowcount >= 1:
             return read(cursor=cursor, id=acc.id)
         else:
@@ -45,3 +46,14 @@ def update(cursor, acc: Account):
         return False, None
         
 
+def update_daily_limit(cursor, id, limit):
+    try:
+        cursor.execute("UPDATE account SET `limit`=?, `date`=? WHERE `id`=?", [limit, datetime.date.today() ,id])
+        if cursor.rowcount >= 1:
+            return read(cursor=cursor, id=id)
+        else:
+            return False, None
+    except mariadb.Error as e:
+        print(f"Error: {e}")
+        return False, None
+        
