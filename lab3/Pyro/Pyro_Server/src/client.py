@@ -67,7 +67,14 @@ def client_loop(atm_service):
         print("(0) Exit Application")
         print("-------------------")
         
-        user_input = input()[0]
+        user_input = input()
+        
+        # case enter:
+        if len(user_input) == 0:
+            continue
+        
+        # hold only the first character of users input
+        user_input = user_input[0]
         
         if user_input == "1":
             print("----ACCOUNT INFO----")
@@ -111,14 +118,14 @@ def client_loop(atm_service):
             
         if user_input == "7":
             print("----LOGOUT----")
-            ok, result = client_protocol.logout(atm_service, id)
-            if ok:
-                authenticated = False
-                id = -1
-                name = ""
-            print(result["message"]) 
-            client_loop(atm_service=atm_service)
-            # print("---------------")
+            # ok, result = client_protocol.logout(atm_service, id)
+            # if ok:
+            #     authenticated = False
+            #     id = -1
+            #     name = ""
+            # print(result["message"]) 
+            # client_loop(atm_service=atm_service)
+            # # print("---------------")
 
 
 

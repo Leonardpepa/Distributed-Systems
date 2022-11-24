@@ -1,6 +1,15 @@
 import mariadb
 from account import Account
 import datetime
+
+def get_all_accounts(cursor):
+    try:
+        cursor.execute("SELECT `id` FROM `account` WHERE 1 ")
+        result = cursor.fetchall()
+        return result
+    except mariadb.Error as e:
+        print(f"Error: {e}")
+        return False, None
         
     
 def auth(cursor, id: int, pin: int) -> tuple[bool, any]:
