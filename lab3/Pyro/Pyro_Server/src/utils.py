@@ -9,3 +9,4 @@ def day_passed(current, db_date) -> int:
         return delta.days
     except ValueError as error:
         print(f"Error: {error}")
+        

@@ -1,12 +1,17 @@
 import mariadb
 from account import Account
 import datetime
+import db
 
-def get_all_accounts(cursor):
+def get_all_accounts():
     try:
+        conn, cursor = db.db_connection()
         cursor.execute("SELECT `id` FROM `account` WHERE 1 ")
         result = cursor.fetchall()
-        return result
+        cursor.close()
+        conn.close()
+        id_list = [int(el["id"]) for el in result]   
+        return id_list
     except mariadb.Error as e:
         print(f"Error: {e}")
         return False, None

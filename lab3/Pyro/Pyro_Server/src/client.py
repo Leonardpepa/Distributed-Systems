@@ -1,12 +1,12 @@
 import Pyro4
 import client_protocol
 
-def client_loop(atm_service):
+def client_loop(ATM_API):
     authenticated = False
     id = -1
     name = ""
     
-    print("\n Welcome to Pamak Bank Pyro Version")
+    print("\nWelcome to Pamak Bank Pyro Version!")
     while not authenticated:
         print("-------------------")
         print("(1) Login")
@@ -14,7 +14,7 @@ def client_loop(atm_service):
         print("(0) Exit")
         print("-------------------")
         
-        user_input = input()
+        user_input = input("Enter Action: ")
         
         # case enter:
         if len(user_input) == 0:
@@ -31,7 +31,7 @@ def client_loop(atm_service):
         # Login routine
         if user_input == "1":
             print("----LOGIN----")
-            ok, result = client_protocol.handleLogin(atm_service)
+            ok, result = client_protocol.handleLogin(ATM_API)
             if ok:
                 id = result["id"]
                 name = result["name"]
@@ -42,7 +42,7 @@ def client_loop(atm_service):
         # Register routine
         if user_input == "2":
             print("----Register----")
-            ok, result = client_protocol.handleRegister(atm_service)
+            ok, result = client_protocol.handleRegister(ATM_API)
             if ok:
                 id = result["id"]
                 name = result["name"]
@@ -52,7 +52,7 @@ def client_loop(atm_service):
             
             
     if authenticated:
-        print("----MAIN PAGE----")
+        print("\n----MAIN PAGE----")
         print(f"Hello {name}!")
         
     while authenticated:
@@ -67,7 +67,7 @@ def client_loop(atm_service):
         print("(0) Exit Application")
         print("-------------------")
         
-        user_input = input()
+        user_input = input("Enter Action: ")
         
         # case enter:
         if len(user_input) == 0:
@@ -78,12 +78,12 @@ def client_loop(atm_service):
         
         if user_input == "1":
             print("----ACCOUNT INFO----")
-            client_protocol.handleInfo(atm_service, id)
+            client_protocol.handleInfo(ATM_API, id)
             # print("--------------------")
             
         if user_input == "2":
             print("----STATEMENT INFO----")
-            client_protocol.get_statements(atm_service, id)
+            client_protocol.get_statements(ATM_API, id)
             # print("--------------------")
             
         
@@ -96,42 +96,41 @@ def client_loop(atm_service):
         # Deposit routine
         if user_input == "3":
             print("----DEPOSIT----")
-            client_protocol.handleDeposit(atm_service, id)
+            client_protocol.handleDeposit(ATM_API, id)
             # print("---------------")
             
         # Withdraw routine
         if user_input == "4":
             print("----WITHDRAW----")
-            client_protocol.handleWithdraw(atm_service, id)
+            client_protocol.handleWithdraw(ATM_API, id)
             # print("----------------")
         
         # Balance routine
         if user_input == "5":
             print("----BALANCE----")
-            client_protocol.handleBalance(atm_service, id)  
+            client_protocol.handleBalance(ATM_API, id)  
             # print("---------------")
         
         if user_input == "6":
             print("----TRANFER----")
-            client_protocol.handleTransfer(atm_service, id)
+            client_protocol.handleTransfer(ATM_API, id)
             # print("---------------")
             
         if user_input == "7":
             print("----LOGOUT----")
-            # ok, result = client_protocol.logout(atm_service, id)
-            # if ok:
-            #     authenticated = False
-            #     id = -1
-            #     name = ""
-            # print(result["message"]) 
-            # client_loop(atm_service=atm_service)
-            # # print("---------------")
+            ok, result = client_protocol.logout(ATM_API, id)
+            if ok:
+                authenticated = False
+                id = -1
+                name = ""
+            print(result["message"]) 
+            return client_loop(ATM_API=ATM_API)
 
 
 
 def main():
-    atm_service = Pyro4.Proxy("PYRONAME:ATM_Service")
-    client_loop(atm_service=atm_service)            
+    ATM_API = Pyro4.Proxy("PYRONAME:ATM_API")
+    client_loop(ATM_API=ATM_API)            
             
             
 if __name__ == "__main__":
