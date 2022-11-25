@@ -163,6 +163,11 @@ class ATM_API(object):
         if id_from == id_to:
             return False, {"message": "You cannot tranfer money to urself."}
         
+        ok, _ = acc_repo.read(self.cursor, id_to)
+        if not ok:
+            return False, {"message": "The account you want to transfer doesn't exist."}
+            
+            
         lockA, lockB = threadSafety.two_face_lock(id_from, id_to) 
         
         # lock both clients for the transaction
@@ -184,7 +189,7 @@ class ATM_API(object):
                 if not ok:
                     return False, result
                 
-                ok, result2 = self.deposit(id_to, amount)
+                ok, _ = self.deposit(id_to, amount)
                 
                 if not ok:
                     return False, result

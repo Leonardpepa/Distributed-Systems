@@ -18,7 +18,7 @@ def handleRegister(ATM_API):
         id = int(input("Enter your ID: "))
         password = int(input("Enter your password: "))
         name = input("Enter your name: ")
-        print("Loading...")
+        print("Loading...", flush=True)
         ok, result = ATM_API.create(id=id, pin=password, name=name)
         if ok:
             result["id"] = id
@@ -39,11 +39,11 @@ def handleDeposit(ATM_API, id: int):
         ok, result = ATM_API.deposit(id, amount)
         
         if ok:
-            print("Deposit was successful. New Balance: ", result["balance"])
+            print("Deposit was successful. New Balance: ", result["balance"], flush=True)
         else:
-            print(result["message"])
+            print(result["message"], flush=True)
     except ValueError as error:
-        print("The amount needs be a number, please try again.")
+        print("The amount needs be a number, please try again.", flush=True)
 
 def handleWithdraw(ATM_API, id: int):
     try:
@@ -54,11 +54,11 @@ def handleWithdraw(ATM_API, id: int):
         ok, result = ATM_API.withdraw(id, amount)
         
         if ok:
-            print("Withdraw was successful. New Balance: ", result["balance"])
+            print("Withdraw was successful. New Balance: ", result["balance"], flush=True)
         else:
-            print(result["message"])
+            print(result["message"], flush=True)
     except ValueError as error:
-        print("The amount needs be a number, please try again.")
+        print("The amount needs be a number, please try again.", flush=True)
 
 def handleTransfer(ATM_API, from_id: int):
     try:
@@ -67,14 +67,14 @@ def handleTransfer(ATM_API, from_id: int):
         amount = float(input("Enter the amount to transfer: "))
         
         if amount <= 0:
-            print("Amount must be greater than 0.")
+            print("Amount must be greater than 0.", flush=True)
             return
             
         ok, result = ATM_API.transfer(from_id, to_id, name_to, amount)
         if not ok:
-            print(result["message"])
+            print(result["message"], flush=True)
         else:
-            print(f"You transfered {amount} to {name_to} successfully.")
+            print(f"You transfered {amount} to {name_to} successfully.", flush=True)
         
     except ValueError as error:
         print(error)
@@ -82,36 +82,36 @@ def handleTransfer(ATM_API, from_id: int):
 def handleBalance(ATM_API, id: int):
     ok, result = ATM_API.balance(id)    
     if ok:
-        print("Your balance is: ", result["balance"])
+        print("Your balance is: ", result["balance"], flush=True)
     else:
-        print(result["message"])
+        print(result["message"], flush=True)
 
 def handleInfo(ATM_API, id: int):
     ok, result = ATM_API.info(id)
     if ok:
-        print("ID:", result["id"])
-        print("Name:", result["name"])
-        print("Balance:", result["balance"])
-        print("MAX daily limit:", 900)
-        print("Daily limit left:", result["limit"])
-        print("Daily limit date: ", result["date"])
+        print("ID:", result["id"], flush=True)
+        print("Name:", result["name"], flush=True)
+        print("Balance:", result["balance"], flush=True)
+        print("MAX daily limit:", 900, flush=True)
+        print("Daily limit left:", result["limit"], flush=True)
+        print("Daily limit date: ", result["date"], flush=True)
     else:
-        print(result["message"])
+        print(result["message"], flush=True)
 
 
 def get_statements(ATM_API, id: int):
     ok, result = ATM_API.get_statements(id)
     if not ok:
-        print(result["message"])
+        print(result["message"], flush=True)
         return
     if len(result) == 0:
-        print("You have made 0 bank statements.")
+        print("You have made 0 bank statements.", flush=True)
         return
     for i, statement in enumerate(result):
         type = statement["type"]
         message = statement["message"]
         date = statement["timestamp"]
-        print(f"({i+1}) Type: {type}, {message}, Date: {date}")
+        print(f"({i+1}) Type: {type}, {message}, Date: {date}", flush=True)
 
 def logout(ATM_API, id: int):
     return ATM_API.logout(id)
