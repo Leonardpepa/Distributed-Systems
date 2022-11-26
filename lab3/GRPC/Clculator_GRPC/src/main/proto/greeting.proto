@@ -1,0 +1,26 @@
+syntax = "proto3";
+option java_multiple_files = true;
+package org.example.grpc.Calculator;
+
+enum Operator {
+  ADD = 0;
+  SUB = 1;
+  MUL = 2;
+  DIV = 3;
+}
+
+message BinaryOpRequest {
+  Operator operator = 1;
+  float operandA = 2;
+  float operandB = 3;
+}
+
+message BinaryOpResponse {
+  float result = 1;
+}
+
+service Calculator {
+  rpc calculate(BinaryOpRequest) returns (BinaryOpResponse) {}
+}
+
+
