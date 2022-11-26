@@ -17,7 +17,7 @@ def get_all_accounts():
         return False, None
         
     
-def auth(cursor, id: int, pin: int) -> tuple[bool, any]:
+def auth(cursor, id, pin):
     try:
         cursor.execute("SELECT `id`, `name`, `date` FROM account WHERE `id`=? AND `pin`=?", [id, pin])
         result = cursor.fetchone()
@@ -28,7 +28,7 @@ def auth(cursor, id: int, pin: int) -> tuple[bool, any]:
         print(f"Error: {e}")
         return False, None
 
-def create(cursor, acc: Account) -> bool:
+def create(cursor, acc):
     try:
         cursor.execute("INSERT INTO `account`(`id`, `pin`, `name`, `balance`, `limit`) VALUES (?,?,?,?,?)", [acc.id, acc.pin, acc.name, 0, acc.limit])
         return cursor.rowcount >= 1
@@ -37,7 +37,7 @@ def create(cursor, acc: Account) -> bool:
         return False
 
 
-def read(cursor, id: int):
+def read(cursor, id):
     try:
         cursor.execute("SELECT `id`, `name`, `balance`, `limit`, `date` FROM `account` WHERE `id`=? ",  [id])
         result = cursor.fetchone()
@@ -48,7 +48,7 @@ def read(cursor, id: int):
         print(f"Error: {e}")
         return False, None
 
-def update(cursor, acc: Account):
+def update(cursor, acc):
     try:
         cursor.execute("UPDATE account SET `name`=?, `balance`=?, `limit`=? WHERE `id`=?", [acc.name, acc.balance, acc.limit, acc.id])
         if cursor.rowcount >= 1:
@@ -70,4 +70,3 @@ def update_daily_limit(cursor, id, limit):
     except mariadb.Error as e:
         print(f"Error: {e}")
         return False, None
-        

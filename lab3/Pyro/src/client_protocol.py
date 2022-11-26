@@ -29,7 +29,7 @@ def handleRegister(ATM_API):
     except ValueError as error:
         return False, {"message": "ID and password need to be integers, please try again."}
 
-def handleDeposit(ATM_API, id: int):
+def handleDeposit(ATM_API, id):
     try:
         amount = float(input("Enter the amount your want to deposit: "))
         
@@ -45,7 +45,7 @@ def handleDeposit(ATM_API, id: int):
     except ValueError as error:
         print("The amount needs be a number, please try again.", flush=True)
 
-def handleWithdraw(ATM_API, id: int):
+def handleWithdraw(ATM_API, id):
     try:
         amount = float(input("Enter the amount your want to withdraw: "))
         if amount <= 0:
@@ -60,7 +60,7 @@ def handleWithdraw(ATM_API, id: int):
     except ValueError as error:
         print("The amount needs be a number, please try again.", flush=True)
 
-def handleTransfer(ATM_API, from_id: int):
+def handleTransfer(ATM_API, from_id):
     try:
         to_id = int(input("Enter the ID of the account you want to transfer: "))
         name_to = input("Enter the name of the account holder to transfer: ")
@@ -79,14 +79,14 @@ def handleTransfer(ATM_API, from_id: int):
     except ValueError as error:
         print(error)
 
-def handleBalance(ATM_API, id: int):
+def handleBalance(ATM_API, id):
     ok, result = ATM_API.balance(id)    
     if ok:
         print("Your balance is: ", result["balance"], flush=True)
     else:
         print(result["message"], flush=True)
 
-def handleInfo(ATM_API, id: int):
+def handleInfo(ATM_API, id):
     ok, result = ATM_API.info(id)
     if ok:
         print("ID:", result["id"], flush=True)
@@ -99,7 +99,7 @@ def handleInfo(ATM_API, id: int):
         print(result["message"], flush=True)
 
 
-def get_statements(ATM_API, id: int):
+def get_statements(ATM_API, id):
     ok, result = ATM_API.get_statements(id)
     if not ok:
         print(result["message"], flush=True)
@@ -113,6 +113,6 @@ def get_statements(ATM_API, id: int):
         date = statement["timestamp"]
         print(f"({i+1}) Type: {type}, {message}, Date: {date}", flush=True)
 
-def logout(ATM_API, id: int):
+def logout(ATM_API, id):
     return ATM_API.logout(id)
     

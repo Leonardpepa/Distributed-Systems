@@ -12,25 +12,25 @@ from threading import RLock
 # ensures thread safety
 @Pyro4.behavior(instance_mode="single")
 class MyThreadSafety:
-    def __init__(self, id_list) -> None:
+    def __init__(self, id_list):
         self.locks = {}
         self._initialize_locks(id_list)
     
     # return the lock for the corresponding account
-    def lock(self, id: int):
+    def lock(self, id):
         lock = self.locks.get(id)
         if lock is None:
              raise Exception(f"Exception | Lock object is None for ID: {id}")
         return lock
     
     # insert a lock for the corresponding account
-    def put_lock(self, id: int):
+    def put_lock(self, id):
         if self.locks.get(id) is None:
             self.locks[id] = RLock()
     
     # return the locks for 2 account's based on the id
     # prevent deadlock's
-    def two_face_lock(self, idA: int, idB: int):
+    def two_face_lock(self, idA, idB):
         if idA < idB:
             return self.lock(idA), self.lock(idB)
         else:
@@ -50,7 +50,7 @@ class ATM_API(object):
     # connect to db
     conn, cursor = db.db_connection()
     
-    def __init__(self) -> None:
+    def __init__(self):
         self.id = -1
     
     # udate daily limit when a day passes
@@ -59,7 +59,7 @@ class ATM_API(object):
             acc_repo.update_daily_limit(self.cursor, id, 900)
     
     # get account info
-    def info(self, id: int):
+    def info(self, id):
         if self.id != id:
             return False, {"message": "Cannot find user, please login correctly."}
         
@@ -72,7 +72,7 @@ class ATM_API(object):
                 return False, {"message": "Cannot find user, please login correctly."}
     
     # login an account
-    def auth(self, id: int, pin: int):  
+    def auth(self, id, pin):  
         ok, result = acc_repo.auth(cursor=self.cursor, id=id, pin=pin)
         if ok:
             self.id = result["id"]
@@ -83,7 +83,7 @@ class ATM_API(object):
         return False, {"message": "Authentication failed, wrong credentials."}
     
     # register an account
-    def create(self, id: int, pin: int, name: str):
+    def create(self, id, pin, name):
         if len(name) == 0:
             return False, {"message": "Name cannot be empty."}
         
@@ -105,7 +105,7 @@ class ATM_API(object):
                 return False, {"message": "Error occurred while creating the account, please try again later."}
     
     # deposit money from an  account                 
-    def deposit(self, id: int, amount: float):
+    def deposit(self, id, amount):
         with threadSafety.lock(id):
             if amount <= 0:
                 return False, {"message": "Amount must be greater than 0."}
@@ -125,7 +125,7 @@ class ATM_API(object):
             return True, result
     
     # withdraw money from an  account            
-    def withdraw(self, id: int,  amount: float):
+    def withdraw(self, id,  amount):
         if self.id != id:
             return False, {"message": "Bad Request."}
         
@@ -156,7 +156,7 @@ class ATM_API(object):
             return True, result
     
     # tranfer money between accounts   
-    def transfer(self, id_from, id_to: int, name_to: str, amount: float):
+    def transfer(self, id_from, id_to, name_to, amount):
         if self.id != id_from:
             return False, {"message": "Bad Request."}
         
@@ -198,7 +198,7 @@ class ATM_API(object):
                 return True, result
     
     # check the account balance
-    def balance(self, id: int):
+    def balance(self, id):
         if self.id != id:
             return False, {"message": "Bad Request."}
         
@@ -209,7 +209,7 @@ class ATM_API(object):
             return True, result
     
     # get bank statements for an account
-    def get_statements(self, id: int):
+    def get_statements(self, id):
         if self.id != id:
             return False, {"message": "Bad Request."}
         ok, result = statement_repository.read_by_acc_id(self.cursor, id)
@@ -218,6 +218,6 @@ class ATM_API(object):
         else:
             return False, {"message": "Something went wrong try again, please try again later."}
 
-    def logout(self, id: int):
+    def logout(self, id):
         self.id = -1
         return True, {"message": "User logged out."}

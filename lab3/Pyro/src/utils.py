@@ -1,5 +1,5 @@
 from datetime import datetime
-def day_passed(current, db_date) -> int:
+def day_passed(current, db_date):
     try:
         current = str(current).replace('-', '/')
         db_date = str(db_date).replace('-', '/')
