@@ -117,16 +117,16 @@ public class AccountRepository implements CRUDRepository<Account>{
     public Account updateDailyLimit(int id, double limit){
         try {
             java.sql.Date sqlDate = new java.sql.Date(new Date().getTime());
+
             updateLimitStmt.clearParameters();
             updateLimitStmt.setDouble(1, limit);
             updateLimitStmt.setDate(2, sqlDate);
             updateLimitStmt.setInt(3, id);
 
-            if (updateStmt.executeUpdate() == 0) {
+            if (updateLimitStmt.executeUpdate() == 0) {
                 return null;
             }
             Account acc = read(id);
-            System.out.println("Updated: " + acc);
             return acc;
         } catch (SQLException e) {
             throw new RuntimeException(e);

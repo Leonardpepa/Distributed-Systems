@@ -6,9 +6,19 @@ import org.bank.Model.DatabaseConnector;
 import org.bank.Model.StatementRepository;
 import org.bank.grpc.Bank.*;
 
+import javax.swing.text.DateFormatter;
 import java.sql.Connection;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.Period;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class BankServiceImpl extends BankGrpc.BankImplBase {
 
@@ -16,6 +26,18 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
     private Connection connection = new DatabaseConnector().getConnection();
     private AccountRepository repo = new AccountRepository(connection);
     private StatementRepository stmtRepo = new StatementRepository(connection);
+
+    private void updateDailyLimit(int id, String dateInDB){
+        LocalDate nowDate = LocalDate.now();
+        LocalDate limitDate = LocalDate.parse(dateInDB);
+
+        Period period = Period.between(nowDate, limitDate);
+        int diff = Math.abs(period.getDays());
+        System.out.println(diff);
+        if (diff >= 1){
+            repo.updateDailyLimit(id, 900);
+        }
+    }
     @Override
     public void info(GenericRequest request, StreamObserver<InfoResponse> responseObserver) {
         InfoResponse response;
@@ -29,6 +51,8 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
         }
 
         Account account = repo.read(request.getId());
+
+        updateDailyLimit(request.getId(), account.getDate());
 
         if (account == null){
             response = InfoResponse.newBuilder()
