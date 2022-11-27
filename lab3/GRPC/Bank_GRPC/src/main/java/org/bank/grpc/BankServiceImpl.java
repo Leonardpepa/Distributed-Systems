@@ -224,7 +224,7 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
 
     @Override
     public void deposit(DepositRequest request, StreamObserver<DepositResponse> responseObserver) {
-        DepositResponse response = depositHelper(request);
+        DepositResponse response = depositHelper(request, false);
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
@@ -298,7 +298,7 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
         }
 
         DepositResponse depositResponse = depositHelper(DepositRequest.newBuilder().setId(request.getIdTo()).setAmount(request.getAmount())
-                .build());
+                .build(), true);
 
         if (depositResponse.getOk().getOk() == false){
             response = TransferResponse.newBuilder().setOk(depositResponse.getOk()).build();
@@ -331,8 +331,18 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
     }
 
 
-    private DepositResponse depositHelper(DepositRequest request){
+    private DepositResponse depositHelper(DepositRequest request, boolean isTransfer){
         DepositResponse response;
+
+        if (!isTransfer){
+            if (this.id != request.getId()){
+                response = DepositResponse.newBuilder()
+                        .setOk(Ok.newBuilder().setOk(false).setMessage("Bad Request.").build())
+                        .build();
+                return response;
+            }
+
+        }
 
         if (request.getId() <= 0){
             response = DepositResponse.newBuilder()
