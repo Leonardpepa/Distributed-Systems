@@ -197,7 +197,7 @@ class ATM_API(object):
                 ok, acc_to_transfer = acc_repo.read(self.cursor, id_to)
                 
                 if not ok:
-                    return False, {"message": "The account you want to transfer doesn't exist."}
+                    return False, {"message": "Something went wrong, please try again later."}
                 
                 if acc_to_transfer["name"] != name_to:
                     return False, {"message": "Wrong account details, transfer cannot be completed."}
@@ -230,11 +230,13 @@ class ATM_API(object):
     def get_statements(self, id):
         if self.id != id:
             return False, {"message": "Bad Request."}
-        ok, result = statement_repository.read_by_acc_id(self.cursor, id)
-        if ok:
-            return True, result
-        else:
-            return False, {"message": "Something went wrong, please try again later."}
+        
+        with threadSafety.lock(id):
+            ok, result = statement_repository.read_by_acc_id(self.cursor, id)
+            if ok:
+                return True, result
+            else:
+                return False, {"message": "Something went wrong, please try again later."}
 
     def logout(self, id):
         self.id = -1

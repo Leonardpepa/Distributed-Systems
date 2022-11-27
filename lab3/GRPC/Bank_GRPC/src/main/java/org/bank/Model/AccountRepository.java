@@ -6,7 +6,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class AccountRepository implements CRUDRepository<Account>{
 
@@ -20,7 +22,6 @@ public class AccountRepository implements CRUDRepository<Account>{
     private final PreparedStatement updateLimitStmt;
 
     private final PreparedStatement deleteStmt = null;
-
     public AccountRepository(Connection connection){
         this.connection = connection;
         try {
@@ -64,8 +65,6 @@ public class AccountRepository implements CRUDRepository<Account>{
             if (createStmt.executeUpdate() == 0) {
                 return null;
             }
-
-            System.out.println("Created: " + object);
             return object;
 
         } catch (SQLException e) {
@@ -85,7 +84,6 @@ public class AccountRepository implements CRUDRepository<Account>{
                 return null;
             }
             Account acc = MyUtils.deserializeAcc(res);
-            System.out.println("read: " + acc);
             return acc;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -106,7 +104,6 @@ public class AccountRepository implements CRUDRepository<Account>{
             if (updateStmt.executeUpdate() == 0) {
                 return null;
             }
-            System.out.println("Updated: " + object);
             return object;
 
         } catch (SQLException e) {
@@ -133,6 +130,19 @@ public class AccountRepository implements CRUDRepository<Account>{
         }
     }
 
+    public List<Integer> getAllIds(){
+        try {
+            List<Integer> ids = new ArrayList<>();
+            PreparedStatement getAllIds = connection.prepareStatement("SELECT * FROM account WHERE 1");
+            ResultSet res = getAllIds.executeQuery();
+            while (res.next()){
+                ids.add(res.getInt(1));
+            }
+            return ids;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
     @Override
     public Account delete(Account object) {
 //      "SELECT `id`, `name`, `date` FROM account WHERE `id`=? AND `pin`=?"

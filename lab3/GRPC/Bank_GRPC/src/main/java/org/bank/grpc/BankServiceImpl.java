@@ -4,6 +4,7 @@ import io.grpc.stub.StreamObserver;
 import org.bank.Model.AccountRepository;
 import org.bank.Model.DatabaseConnector;
 import org.bank.Model.StatementRepository;
+import org.bank.Server;
 import org.bank.grpc.Bank.*;
 
 import javax.swing.text.DateFormatter;
@@ -33,7 +34,7 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
 
         Period period = Period.between(nowDate, limitDate);
         int diff = Math.abs(period.getDays());
-        System.out.println(diff);
+
         if (diff >= 1){
             repo.updateDailyLimit(id, 900);
         }
@@ -49,27 +50,31 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             responseObserver.onCompleted();
             return;
         }
+        Server.lockRead(request.getId());
+        try {
+            Account account = repo.read(request.getId());
 
-        Account account = repo.read(request.getId());
+            if (account == null){
+                response = InfoResponse.newBuilder()
+                        .setOk(Ok.newBuilder().setOk(false).setMessage("Cannot find user, please login correctly.").build())
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
 
-        updateDailyLimit(request.getId(), account.getDate());
+            updateDailyLimit(request.getId(), account.getDate());
 
-        if (account == null){
             response = InfoResponse.newBuilder()
-                    .setOk(Ok.newBuilder().setOk(false).setMessage("Cannot find user, please login correctly.").build())
-                    .build();
+                            .setOk(Ok.newBuilder().setOk(true).build())
+                            .setAccount(account)
+                            .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-            return;
+        }finally {
+            Server.unlockRead(request.getId());
         }
-
-        response = InfoResponse.newBuilder()
-                        .setOk(Ok.newBuilder().setOk(true).build())
-                        .setAccount(account)
-                        .build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -84,21 +89,26 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             return;
         }
 
-        List<Statement> statements = stmtRepo.readByAccId(request.getId());
-        if (statements == null){
-            response = StatementResponse.newBuilder().setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong, please try again later."))
-                    .build();
+        Server.lockRead(request.getId());
+        try{
+            List<Statement> statements = stmtRepo.readByAccId(request.getId());
+            if (statements == null){
+                response = StatementResponse.newBuilder().setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong, please try again later."))
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            StatementResponse.Builder builder = StatementResponse.newBuilder();
+            builder.addAllStatement(statements);
+            response = builder.setOk(Ok.newBuilder().setOk(true).build()).build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-            return;
+        }finally {
+            Server.unlockRead(request.getId());
         }
-
-        StatementResponse.Builder builder = StatementResponse.newBuilder();
-        builder.addAllStatement(statements);
-        response = builder.setOk(Ok.newBuilder().setOk(true).build()).build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
@@ -112,26 +122,28 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             responseObserver.onCompleted();
             return;
         }
-
-        Account account = repo.read(request.getId());
-
-        if (account == null){
+        Server.lockRead(request.getId());
+        try{
+            Account account = repo.read(request.getId());
+            if (account == null){
+                response = BalanceResponse.newBuilder()
+                        .setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong try again, please try again later.").build())
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+            updateDailyLimit(account.getId(), account.getDate());
             response = BalanceResponse.newBuilder()
-                    .setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong try again, please try again later.").build())
+                    .setOk(Ok.newBuilder().setOk(true).build())
+                    .setBalance(account.getBalance())
                     .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-            return;
+        }finally {
+            Server.unlockRead(request.getId());
         }
-
-        response = BalanceResponse.newBuilder()
-                .setOk(Ok.newBuilder().setOk(true).build())
-                .setBalance(account.getBalance())
-                .build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-
     }
 
     @Override
@@ -166,8 +178,8 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             responseObserver.onCompleted();
             return;
         }
-
         this.id = account.getId();
+        updateDailyLimit(account.getId(), account.getDate());
         response = LoginResponse.newBuilder()
                                 .setOk(Ok.newBuilder().setOk(true))
                                 .setId(account.getId())
@@ -218,47 +230,62 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             responseObserver.onCompleted();
             return;
         }
-
-        Account newAccount = Account.newBuilder().setId(request.getId())
-                .setPin(request.getPin())
-                .setName(request.getName())
-                .setLimit(0)
-                .setDate("")
-                .build();
-
-        if (repo.create(newAccount) == null){
-            response = RegisterResponse.newBuilder()
-                    .setOk(Ok.newBuilder().setOk(false).setMessage("Error occurred while creating the account, please try again later.").build())
+        Server.putLock(request.getId());
+        Server.lockWrite(request.getId());
+        try {
+            Account newAccount = Account.newBuilder().setId(request.getId())
+                    .setPin(request.getPin())
+                    .setName(request.getName())
+                    .setLimit(0)
+                    .setDate("")
                     .build();
+
+            if (repo.create(newAccount) == null){
+                response = RegisterResponse.newBuilder()
+                        .setOk(Ok.newBuilder().setOk(false).setMessage("Error occurred while creating the account, please try again later.").build())
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            this.id = newAccount.getId();
+            response = RegisterResponse.newBuilder()
+                    .setOk(Ok.newBuilder().setOk(true).build())
+                    .setId(newAccount.getId())
+                    .setName(newAccount.getName())
+                    .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-            return;
+        }finally {
+            Server.unlockWrite(request.getId());
         }
-
-        this.id = newAccount.getId();
-        response = RegisterResponse.newBuilder()
-                .setOk(Ok.newBuilder().setOk(true).build())
-                .setId(newAccount.getId())
-                .setName(newAccount.getName())
-                .build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
     @Override
     public void deposit(DepositRequest request, StreamObserver<DepositResponse> responseObserver) {
-        DepositResponse response = depositHelper(request, false);
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+        Server.lockWrite(request.getId());
+        try{
+            DepositResponse response = depositHelper(request, false);
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }finally {
+            Server.unlockWrite(request.getId());
+        }
     }
 
     @Override
     public void withdraw(WithdrawRequest request, StreamObserver<WithdrawResponse> responseObserver) {
-        WithdrawResponse response = withdrawHelper(request);
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
-    }
+        Server.lockWrite(request.getId());
+        try{
+            WithdrawResponse response = withdrawHelper(request);
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        }finally {
+            Server.unlockWrite(request.getId());
+        }
+}
 
     @Override
     public void transfer(TransferRequest request, StreamObserver<TransferResponse> responseObserver) {
@@ -301,49 +328,56 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             responseObserver.onCompleted();
             return;
         }
+        Server.twoFaceLock(request.getIdFrom(), request.getIdTo());
+        try{
+            accToTransfer = repo.read(request.getIdTo());
 
-        if (!request.getNameTo().equalsIgnoreCase(accToTransfer.getName())){
+            if (!request.getNameTo().equalsIgnoreCase(accToTransfer.getName())){
+                response = TransferResponse.newBuilder()
+                        .setOk(Ok.newBuilder().setOk(false).setMessage("Wrong account details, transfer cannot be completed.").build())
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+           WithdrawResponse withdrawResponse = this.withdrawHelper(WithdrawRequest.newBuilder().setId(request.getIdFrom()).setAmount(request.getAmount())
+                    .build());
+
+            if (withdrawResponse.getOk().getOk() == false){
+                response = TransferResponse.newBuilder().setOk(withdrawResponse.getOk()).build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            DepositResponse depositResponse = depositHelper(DepositRequest.newBuilder().setId(request.getIdTo()).setAmount(request.getAmount())
+                    .build(), true);
+
+            if (depositResponse.getOk().getOk() == false){
+                response = TransferResponse.newBuilder().setOk(depositResponse.getOk()).build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+                return;
+            }
+
+            stmtRepo.create(Statement.newBuilder()
+                    .setAccountId(request.getIdFrom())
+                    .setType("transfer")
+                    .setMessage(request.getAmount() + " transferred from ID: " + request.getIdFrom() + " to ID: "+ request.getIdTo())
+                    .setDate("")
+                    .build());
             response = TransferResponse.newBuilder()
-                    .setOk(Ok.newBuilder().setOk(false).setMessage("Wrong account details, transfer cannot be completed.").build())
+                    .setOk(Ok.newBuilder().setOk(true).build())
+                    .setAmount(request.getAmount())
                     .build();
+
             responseObserver.onNext(response);
             responseObserver.onCompleted();
-            return;
+        }finally {
+            Server.twoFaceUnlock(request.getIdFrom(), request.getIdTo());
         }
 
-       WithdrawResponse withdrawResponse = this.withdrawHelper(WithdrawRequest.newBuilder().setId(request.getIdFrom()).setAmount(request.getAmount())
-                .build());
-
-        if (withdrawResponse.getOk().getOk() == false){
-            response = TransferResponse.newBuilder().setOk(withdrawResponse.getOk()).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-            return;
-        }
-
-        DepositResponse depositResponse = depositHelper(DepositRequest.newBuilder().setId(request.getIdTo()).setAmount(request.getAmount())
-                .build(), true);
-
-        if (depositResponse.getOk().getOk() == false){
-            response = TransferResponse.newBuilder().setOk(depositResponse.getOk()).build();
-            responseObserver.onNext(response);
-            responseObserver.onCompleted();
-            return;
-        }
-
-        stmtRepo.create(Statement.newBuilder()
-                .setAccountId(request.getIdFrom())
-                .setType("transfer")
-                .setMessage(request.getAmount() + " transferred from ID: " + request.getIdFrom() + " to ID: "+ request.getIdTo())
-                .setDate("")
-                .build());
-        response = TransferResponse.newBuilder()
-                .setOk(Ok.newBuilder().setOk(true).build())
-                .setAmount(request.getAmount())
-                .build();
-
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
     }
 
 
