@@ -1,7 +1,9 @@
 package org.bank;
 
+import org.bank.Model.DatabaseConnector;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        DatabaseConnector.Init_DB();
     }
 }

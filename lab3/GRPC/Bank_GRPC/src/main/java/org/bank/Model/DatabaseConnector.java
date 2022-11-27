@@ -27,10 +27,7 @@ public class DatabaseConnector {
             Connection connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/bank", "root", "");
             Statement statement = connection.createStatement();
 
-            String sql = "CREATE DATABASE IF NOT EXITS `bank`";
-            statement.executeQuery(sql);
-
-            sql = "CREATE TABLE IF NOT EXISTS `statement` (`id` INT NOT NULL AUTO_INCREMENT , `account_id` INT NOT NULL , `type` VARCHAR(100) NOT NULL , `message` VARCHAR(255) NOT NULL , `timestamp` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`));";
+            String sql = "CREATE TABLE IF NOT EXISTS `statement` (`id` INT NOT NULL AUTO_INCREMENT , `account_id` INT NOT NULL , `type` VARCHAR(100) NOT NULL , `message` VARCHAR(255) NOT NULL , `timestamp` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`));";
             statement.executeQuery(sql);
 
             sql = "CREATE TABLE IF NOT EXISTS `account` (`id` INT NOT NULL , `pin` INT NOT NULL , `name` VARCHAR(255) NOT NULL , `balance` DOUBLE NOT NULL , `limit` DOUBLE NOT NULL , `date` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP );";
