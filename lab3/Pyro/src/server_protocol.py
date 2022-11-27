@@ -73,6 +73,13 @@ class ATM_API(object):
     
     # login an account
     def auth(self, id, pin):  
+        
+        if id <= 0:
+            return False, {"message": "ID must be greater than zero."}
+        
+        if pin <= 999:
+            return False, {"message": "Password should be greater than 3 digits."}
+        
         ok, result = acc_repo.auth(cursor=self.cursor, id=id, pin=pin)
         if ok:
             self.id = result["id"]
@@ -84,6 +91,13 @@ class ATM_API(object):
     
     # register an account
     def create(self, id, pin, name):
+        
+        if id <= 0:
+            return False, {"message": "ID must be greater than zero."}
+        
+        if pin <= 999:
+            return False, {"message": "Password should be greater than 3 digits."}
+        
         if len(name) == 0:
             return False, {"message": "Name cannot be empty."}
         
@@ -106,6 +120,9 @@ class ATM_API(object):
     
     # deposit money from an  account                 
     def deposit(self, id, amount):
+        if id <= 0:
+            return False, {"message": "Bad request, please login correctly."}
+        
         with threadSafety.lock(id):
             if amount <= 0:
                 return False, {"message": "Amount must be greater than 0."}
@@ -113,13 +130,13 @@ class ATM_API(object):
             ok, account = acc_repo.read(self.cursor, id)
             
             if not ok:
-                return False, {"message": "Something went wrong try again, please try again later."}
+                return False, {"message": "Something went wrong, please try again later."}
             
             newAcc = Account(account["id"], None, account["name"], account["balance"] + amount, account["limit"])
             ok, result = acc_repo.update(self.cursor, newAcc)
             
             if not ok:
-                return False, {"message": "Something went wrong try again, please try again later."}
+                return False, {"message": "Something went wrong, please try again later."}
             
             statement_repository.create(self.cursor, Statement(id, "deposit", f"Deposited {amount}", None))
             return True, result
@@ -136,7 +153,7 @@ class ATM_API(object):
             ok, account = acc_repo.read(self.cursor, id)
             
             if not ok:
-                return False, {"message": "Something went wrong try again, please try again later."}
+                return False, {"message": "Something went wrong, please try again later."}
             
             if account["limit"] - amount < 0:
                 limit = account["limit"]
@@ -150,7 +167,7 @@ class ATM_API(object):
             ok, result = acc_repo.update(self.cursor, newAcc)
             
             if not ok:
-                return False, {"message": "Something went wrong try again, please try again later."}
+                return False, {"message": "Something went wrong, please try again later."}
             
             statement_repository.create(self.cursor, Statement(id, "withdraw", f"Withdraw {amount}", None))
             return True, result
@@ -161,7 +178,7 @@ class ATM_API(object):
             return False, {"message": "Bad Request."}
         
         if id_from == id_to:
-            return False, {"message": "You cannot tranfer money to urself."}
+            return False, {"message": "You cannot tranffer money to urself."}
         
         ok, _ = acc_repo.read(self.cursor, id_to)
         if not ok:
@@ -182,7 +199,7 @@ class ATM_API(object):
                     return False, {"message": "The account you want to transfer doesn't exist."}
                 
                 if acc_to_transfer["name"] != name_to:
-                    return False, {"message": "Wrong account details tranfer cannot be completed."}
+                    return False, {"message": "Wrong account details, transfer cannot be completed."}
                 
                 ok, result = self.withdraw(id_from, amount)
                 
@@ -194,7 +211,7 @@ class ATM_API(object):
                 if not ok:
                     return False, result
 
-                statement_repository.create(self.cursor, Statement(id_from, "transfer", f"{amount} transfered from ID: {id_from} to ID: {id_to}", None))
+                statement_repository.create(self.cursor, Statement(id_from, "transfer", f"{amount} transferred from ID: {id_from} to ID: {id_to}", None))
                 return True, result
     
     # check the account balance
@@ -205,7 +222,7 @@ class ATM_API(object):
         with threadSafety.lock(id):
             ok, result = acc_repo.read(self.cursor, id)
             if not ok:
-                return False, {"message": "Something went wrong try again, please try again later."}       
+                return False, {"message": "Something went wrong, please try again later."}       
             return True, result
     
     # get bank statements for an account
@@ -216,7 +233,7 @@ class ATM_API(object):
         if ok:
             return True, result
         else:
-            return False, {"message": "Something went wrong try again, please try again later."}
+            return False, {"message": "Something went wrong, please try again later."}
 
     def logout(self, id):
         self.id = -1

@@ -50,7 +50,8 @@ message WithdrawRequest {
 message TransferRequest {
   int32 id_from = 1;
   int32 id_to = 2;
-  float amount = 3;
+  string name_to = 3;
+  float amount = 4;
 }
 
 message InfoResponse {
@@ -83,18 +84,22 @@ message RegisterResponse {
 }
 
 message DepositResponse {
-  double amount = 1;
+  optional double balance = 1;
   Ok ok = 2;
 }
 
 message WithdrawResponse {
-  double amount = 1;
+  optional double balance = 1;
   Ok ok = 2;
 }
 
 message TransferResponse {
   double amount = 1;
   Ok ok = 2;
+}
+
+message Empty {
+
 }
 
 service Bank {
@@ -106,5 +111,6 @@ service Bank {
   rpc deposit(DepositRequest) returns (DepositResponse) {}
   rpc withdraw(WithdrawRequest) returns(WithdrawResponse) {}
   rpc transfer(TransferRequest) returns (TransferResponse) {}
+  rpc logout(Empty) returns (Ok) {}
 }
 
