@@ -6,6 +6,8 @@ import org.bank.grpc.Bank.Statement;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MyUtils {
     public static Account deserializeAcc(ResultSet res) {
@@ -33,4 +35,18 @@ public class MyUtils {
             throw new RuntimeException(e);
         }
     }
+
+    public static List<Statement> deserializeListStmt(ResultSet res) {
+        List<Statement> statements = new ArrayList<>();
+        try {
+            while (res.next()){
+                statements.add(deserializeStmt(res));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return statements;
+    }
+
+
 }

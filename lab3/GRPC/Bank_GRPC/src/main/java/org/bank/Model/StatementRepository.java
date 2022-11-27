@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 
 public class StatementRepository implements CRUDRepository<Statement>{
 
@@ -47,18 +48,14 @@ public class StatementRepository implements CRUDRepository<Statement>{
         }
     }
 
-    public Statement readByAccId(int id){
+    public List<Statement> readByAccId(int id){
         try {
             readByAccId.clearParameters();
             readByAccId.setInt(1, id);
 
             ResultSet res = readByAccId.executeQuery();
-            if (!res.next()) {
-                return null;
-            }
-            Statement stmt = MyUtils.deserializeStmt(res);
-            System.out.println("read: " + stmt);
-            return stmt;
+            List<Statement> stmts = MyUtils.deserializeListStmt(res);
+            return stmts;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

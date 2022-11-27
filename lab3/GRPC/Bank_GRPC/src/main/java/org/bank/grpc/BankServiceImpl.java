@@ -7,6 +7,8 @@ import org.bank.Model.StatementRepository;
 import org.bank.grpc.Bank.*;
 
 import java.sql.Connection;
+import java.util.Iterator;
+import java.util.List;
 
 public class BankServiceImpl extends BankGrpc.BankImplBase {
 
@@ -58,9 +60,21 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             return;
         }
 
+        List<Statement> statements = stmtRepo.readByAccId(request.getId());
+        if (statements == null){
+            response = StatementResponse.newBuilder().setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong, please try again later."))
+                    .build();
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+            return;
+        }
 
+        StatementResponse.Builder builder = StatementResponse.newBuilder();
+        builder.addAllStatement(statements);
+        response = builder.setOk(Ok.newBuilder().setOk(true).build()).build();
 
-
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
     @Override
