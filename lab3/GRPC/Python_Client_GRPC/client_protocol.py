@@ -40,7 +40,8 @@ def handleDeposit(ATM_API:bank_pb2_grpc.BankStub, id):
         amount = float(input("Enter the amount your want to deposit: "))
         
         if amount <= 0:
-            return False, {"message": "Amount must be greater than 0."}
+            print("Amount must be greater than 0.")
+            return
         
         response :bank_pb2.DepositResponse = ATM_API.deposit(bank_pb2.DepositRequest(id=id, amount=amount))
         
@@ -55,8 +56,10 @@ def handleDeposit(ATM_API:bank_pb2_grpc.BankStub, id):
 def handleWithdraw(ATM_API:bank_pb2_grpc.BankStub, id):
     try:
         amount = float(input("Enter the amount your want to withdraw: "))
+        
         if amount <= 0:
-            return False, {"message": "Amount must be greater than 0."}
+            print("Amount must be greater than 0.")
+            return
         
         response: bank_pb2.WithdrawResponse = ATM_API.withdraw(bank_pb2.WithdrawRequest(id=id, amount=amount))
         
@@ -84,7 +87,7 @@ def handleTransfer(ATM_API: bank_pb2_grpc.BankStub, from_id):
             print(response.ok.message, flush=True)
         
     except ValueError as error:
-        print(error)
+        print("Wrong input!")
 
 def handleBalance(ATM_API: bank_pb2_grpc.BankStub, id):
     response: bank_pb2.BalanceResponse = ATM_API.balance(bank_pb2.GenericRequest(id=id))    

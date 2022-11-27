@@ -34,7 +34,8 @@ def handleDeposit(ATM_API, id):
         amount = float(input("Enter the amount your want to deposit: "))
         
         if amount <= 0:
-            return False, {"message": "Amount must be greater than 0."}
+            print("Amount must be greater than 0.")
+            return
         
         ok, result = ATM_API.deposit(id, amount)
         
@@ -49,8 +50,8 @@ def handleWithdraw(ATM_API, id):
     try:
         amount = float(input("Enter the amount your want to withdraw: "))
         if amount <= 0:
-            return False, {"message": "Amount must be greater than 0."}
-        
+            print("Amount must be greater than 0.")
+            return
         ok, result = ATM_API.withdraw(id, amount)
         
         if ok:
@@ -77,7 +78,7 @@ def handleTransfer(ATM_API, from_id):
             print(f"You transfered {amount} to {name_to} successfully.", flush=True)
         
     except ValueError as error:
-        print(error)
+        print("Wrong input!")
 
 def handleBalance(ATM_API, id):
     ok, result = ATM_API.balance(id)    

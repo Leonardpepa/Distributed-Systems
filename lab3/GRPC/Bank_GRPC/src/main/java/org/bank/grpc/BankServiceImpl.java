@@ -379,8 +379,6 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
         }
 
     }
-
-
     @Override
     public void logout(Empty request, StreamObserver<Ok> responseObserver) {
         Ok response = Ok.newBuilder().setOk(true).setMessage("User logged out.").build();

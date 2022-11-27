@@ -123,10 +123,10 @@ class ATM_API(object):
         if id <= 0:
             return False, {"message": "Bad request, please login correctly."}
         
+        if amount <= 0:
+            return False, {"message": "Amount must be greater than 0."}
+        
         with threadSafety.lock(id):
-            if amount <= 0:
-                return False, {"message": "Amount must be greater than 0."}
-            
             ok, account = acc_repo.read(self.cursor, id)
             
             if not ok:
@@ -146,10 +146,10 @@ class ATM_API(object):
         if self.id != id:
             return False, {"message": "Bad Request."}
         
+        if amount <= 0:
+            return False, {"message": "Amount must be greater than 0."}
+        
         with threadSafety.lock(id):        
-            if amount <= 0:
-                return False, {"message": "Amount must be greater than 0."}
-            
             ok, account = acc_repo.read(self.cursor, id)
             
             if not ok:
@@ -180,6 +180,9 @@ class ATM_API(object):
         if id_from == id_to:
             return False, {"message": "You cannot tranffer money to urself."}
         
+        if amount <= 0:
+                    return False, {"message": "Amount must be greater than 0."}
+        
         ok, _ = acc_repo.read(self.cursor, id_to)
         
         if not ok:
@@ -191,15 +194,12 @@ class ATM_API(object):
         # lock both clients for the transaction
         with lockA:
             with lockB:
-                if amount <= 0:
-                    return False, {"message": "Amount must be greater than 0."}
-                
                 ok, acc_to_transfer = acc_repo.read(self.cursor, id_to)
                 
                 if not ok:
                     return False, {"message": "Something went wrong, please try again later."}
                 
-                if acc_to_transfer["name"] != name_to:
+                if acc_to_transfer["name"].lower() != name_to.lower():
                     return False, {"message": "Wrong account details, transfer cannot be completed."}
                 
                 ok, result = self.withdraw(id_from, amount)

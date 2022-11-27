@@ -83,13 +83,10 @@ def client_loop(ATM_API):
         if user_input == "1":
             print("----ACCOUNT INFO----", flush=True)
             client_protocol.handleInfo(ATM_API, id)
-            # print("--------------------")
             
         if user_input == "2":
             print("----STATEMENT INFO----", flush=True)
             client_protocol.get_statements(ATM_API, id)
-            # print("--------------------")
-            
         
         if user_input == "0":
             authenticated = False
@@ -97,11 +94,11 @@ def client_loop(ATM_API):
             name = ""
             print("goodbye!", flush=True)
             continue
+        
         # Deposit routine
         if user_input == "3":
             print("----DEPOSIT----", flush=True)
             client_protocol.handleDeposit(ATM_API, id)
-            # print("---------------")
             
         # Withdraw routine
         if user_input == "4":
@@ -112,12 +109,10 @@ def client_loop(ATM_API):
         if user_input == "5":
             print("----BALANCE----", flush=True)
             client_protocol.handleBalance(ATM_API, id)  
-            # print("---------------")
-        
+            
         if user_input == "6":
             print("----TRANFER----", flush=True)
             client_protocol.handleTransfer(ATM_API, id)
-            # print("---------------")
             
         if user_input == "7":
             print("----LOGOUT----", flush=True)
