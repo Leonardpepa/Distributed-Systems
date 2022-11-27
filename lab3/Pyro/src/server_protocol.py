@@ -181,6 +181,7 @@ class ATM_API(object):
             return False, {"message": "You cannot tranffer money to urself."}
         
         ok, _ = acc_repo.read(self.cursor, id_to)
+        
         if not ok:
             return False, {"message": "The account you want to transfer doesn't exist."}
             
