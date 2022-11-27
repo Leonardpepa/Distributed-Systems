@@ -7,19 +7,10 @@ import org.bank.Model.StatementRepository;
 import org.bank.Server;
 import org.bank.grpc.Bank.*;
 
-import javax.swing.text.DateFormatter;
 import java.sql.Connection;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 public class BankServiceImpl extends BankGrpc.BankImplBase {
 
@@ -127,7 +118,7 @@ public class BankServiceImpl extends BankGrpc.BankImplBase {
             Account account = repo.read(request.getId());
             if (account == null){
                 response = BalanceResponse.newBuilder()
-                        .setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong try again, please try again later.").build())
+                        .setOk(Ok.newBuilder().setOk(false).setMessage("Something went wrong, please try again later.").build())
                         .build();
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
