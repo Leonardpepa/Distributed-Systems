@@ -27,7 +27,7 @@ public class AccountRepository implements CRUDRepository<Account>{
             createStmt = connection.prepareStatement("INSERT INTO `account`(`id`, `pin`, `name`, `balance`, `limit`) VALUES (?,?,?,?,?)");
             readStmt = connection.prepareStatement("SELECT `id`, `name`, `balance`, `limit`, `date` FROM `account` WHERE `id`=? ");
             updateStmt = connection.prepareStatement("UPDATE account SET `name`=?, `balance`=?, `limit`=? WHERE `id`=?");
-            authStmt = connection.prepareStatement("SELECT `id`, `name`, `date` FROM account WHERE `id`=? AND `pin`=?");
+            authStmt = connection.prepareStatement("SELECT `id`, `name`, `balance`, `limit`, `date` FROM account WHERE `id`=? AND `pin`=?");
             updateLimitStmt = connection.prepareStatement("UPDATE account SET `limit`=?, `date`=? WHERE `id`=?");
 
         } catch (SQLException e) {

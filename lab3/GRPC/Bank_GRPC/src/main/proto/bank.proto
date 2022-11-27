@@ -53,11 +53,6 @@ message TransferRequest {
   float amount = 3;
 }
 
-message StatementsRequest {
-  Statement statement = 1;
-  Ok ok = 2;
-}
-
 message InfoResponse {
   Account account = 1;
   Ok ok = 2;
@@ -70,7 +65,7 @@ message BalanceResponse {
 }
 
 message StatementResponse {
-  Statement statement = 1;
+  repeated Statement statement = 1;
   Ok ok = 2;
 }
 
@@ -102,4 +97,14 @@ message TransferResponse {
   Ok ok = 2;
 }
 
+service Bank {
+  rpc info(GenericRequest) returns (InfoResponse) {}
+  rpc statements(GenericRequest) returns (StatementResponse) {}
+  rpc balance(GenericRequest) returns (BalanceResponse) {}
+  rpc login(AuthRequest) returns (LoginResponse) {}
+  rpc register(RegisterRequest) returns (RegisterResponse) {}
+  rpc deposit(DepositRequest) returns (DepositResponse) {}
+  rpc withdraw(WithdrawRequest) returns(WithdrawResponse) {}
+  rpc transfer(TransferRequest) returns (TransferResponse) {}
+}
 
