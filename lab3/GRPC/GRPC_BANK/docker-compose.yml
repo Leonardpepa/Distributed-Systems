@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: database
+    container_name: rpc-database
     image: mariadb
     restart: always
     environment:
@@ -25,7 +25,7 @@ services:
     links:
       - database
     build:
-      context: .
+      context: /Bank_GRPC
       dockerfile: Dockerfile
     ports:
       - "5050:5050"
