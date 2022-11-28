@@ -5,4 +5,11 @@ University of Macedonia course of Distributed Systems
 Contains the design documents for the application
 
 ## lab2
-Contains the code for the implementation of the application
+Contains the code for the Program implemented with sockets
+
+## lab3
+Contains the code for the Program implemented with rpc protocol
+* Pyro4 version
+* GRPC version
+
+
