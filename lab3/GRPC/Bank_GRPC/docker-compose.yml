@@ -1,0 +1,33 @@
+services:
+  database:
+    container_name: database
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: bank
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ 'CMD', 'mysqladmin', 'ping', '-uroot', '-proot']
+      interval: 15s
+      timeout: 15s
+      retries: 5
+      start_period: 25s
+
+  server:
+    container_name: grpc-server
+    depends_on:
+      database:
+        condition: service_healthy
+    links:
+      - database
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5050:5050"
+    expose:
+      - 5050

@@ -12,7 +12,7 @@ public class DatabaseConnector {
     public DatabaseConnector(){
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/bank", "root", "");
+            Connection connection = DriverManager.getConnection("jdbc:mariadb://database:3306/bank", "root", "root");
             this.connection = connection;
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
@@ -24,7 +24,7 @@ public class DatabaseConnector {
     public static void Init_DB(){
         try {
             Class.forName("org.mariadb.jdbc.Driver");
-            Connection connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/bank", "root", "");
+            Connection connection = DriverManager.getConnection("jdbc:mariadb://database:3306/bank", "root", "root");
             Statement statement = connection.createStatement();
 
             String sql = "CREATE TABLE IF NOT EXISTS `statement` (`id` INT NOT NULL AUTO_INCREMENT , `account_id` INT NOT NULL , `type` VARCHAR(100) NOT NULL , `message` VARCHAR(255) NOT NULL , `timestamp` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`));";
