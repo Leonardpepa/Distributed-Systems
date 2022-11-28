@@ -18,6 +18,4 @@ docker build -f Python_client_GRPC/Dockerfile -t grpc-bank-client Python_Client_
 docker run -it --rm --network host grpc-bank-client
 ```
 
-## Updates
-
 
