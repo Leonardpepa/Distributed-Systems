@@ -38,3 +38,18 @@ protobuf {
         }
     }
 }
+
+
+task runServer(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "org.example.Server"
+}
+
+task runClient(type: JavaExec) {
+    group = "Execution"
+    description = "Run the main class with JavaExecTask"
+    classpath = sourceSets.main.runtimeClasspath
+    main = "org.example.Client"
+}
