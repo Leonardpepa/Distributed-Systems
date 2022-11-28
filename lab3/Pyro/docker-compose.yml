@@ -19,7 +19,7 @@ services:
       start_period: 25s
   
   server:
-    container_name: server
+    container_name: pyro-bank-server
     depends_on:
       database:
         condition: service_healthy
