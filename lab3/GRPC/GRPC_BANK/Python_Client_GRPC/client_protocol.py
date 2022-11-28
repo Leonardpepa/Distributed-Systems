@@ -8,6 +8,10 @@ def handleLogin(ATM_API: bank_pb2_grpc.BankStub):
     try:
         id = int(input("Enter your ID: "))
         password = int(input("Enter your password: "))
+        
+        if id <= 0 or password <= 999:
+            return False, {"message": "Wrong input, please try again"} 
+        
         print("Loading...", flush=True)
         
         response: bank_pb2.LoginResponse = ATM_API.login(bank_pb2.AuthRequest(id=id, pin=password))
@@ -24,6 +28,13 @@ def handleRegister(ATM_API: bank_pb2_grpc.BankStub):
         id = int(input("Enter your ID: "))
         password = int(input("Enter your password: "))
         name = input("Enter your name: ")
+        
+        if id <= 0 or password <= 999:
+            return False, {"message": "Wrong input, please try again"}
+        
+        if len(name) == 0:
+            return False, {"message": "Name cannot be empty"}
+        
         print("Loading...", flush=True)
         response: bank_pb2.RegisterResponse = ATM_API.register(bank_pb2.RegisterRequest(id=id, pin=password, name=name))
         
@@ -73,7 +84,17 @@ def handleWithdraw(ATM_API:bank_pb2_grpc.BankStub, id):
 def handleTransfer(ATM_API: bank_pb2_grpc.BankStub, from_id):
     try:
         to_id = int(input("Enter the ID of the account you want to transfer: "))
+        
+        if to_id <= 0:
+            print("ID cannot be a negative number")
+            return
+        
         name_to = input("Enter the name of the account holder to transfer: ")
+        
+        if len(name_to) == 0:
+            print("Name cannot be empty")
+            return
+        
         amount = float(input("Enter the amount to transfer: "))
         
         if amount <= 0:
