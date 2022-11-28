@@ -40,7 +40,6 @@ public class StatementRepository implements CRUDRepository<Statement>{
                 return null;
             }
 
-            System.out.println("Created: " + object);
             return object;
 
         } catch (SQLException e) {
@@ -72,7 +71,6 @@ public class StatementRepository implements CRUDRepository<Statement>{
                 return null;
             }
             Statement stmt = MyUtils.deserializeStmt(res);
-            System.out.println("read: " + stmt);
             return stmt;
         } catch (SQLException e) {
             throw new RuntimeException(e);

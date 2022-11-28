@@ -22,7 +22,7 @@ public class Server {
         io.grpc.Server server = serverBuilder.addService(new BankServiceImpl()).build();
 
         try {
-            System.out.println("Calculator Server started on port 5050");
+            System.out.println("Server started on port 5050");
             server.start();
             server.awaitTermination();
         } catch (IOException e) {

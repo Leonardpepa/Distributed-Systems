@@ -1,6 +1,6 @@
 services:
   database:
-    container_name: rpc-database
+    container_name: grpc-database
     image: mariadb
     restart: always
     environment:
