@@ -14,5 +14,5 @@ docker run --name grpc-hello-example  -it --rm --network host grpc-hello-example
 ### Client
 run:
 ```terminal
-docker exec -it grpc-hello-example ./gradlew :runClient 
+docker exec -it grpc-hello-example gradle :runClient 
 ```
