@@ -15,8 +15,8 @@ services:
       test: [ 'CMD', 'mysqladmin', 'ping', '-uroot', '-proot']
       interval: 15s
       timeout: 15s
-      retries: 5
-      start_period: 25s
+      retries: 10
+      start_period: 30s
   
   server:
     container_name: pyro-bank-server
