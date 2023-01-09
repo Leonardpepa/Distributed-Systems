@@ -18,3 +18,9 @@ Contains code for the Program implemented in Message Queues
 * ZeroMQ
 * ZeroRPC
 * simple kafka chat
+
+
+## lab4
+Contains code for the Program implemented with Web Services (SOAP, REST)
+* Rest/bank restful implementation using nodejs, mongodb, passportjs
+* SOAP/bank soap implementation using python with spyne, zeep and mariadb
