@@ -7,8 +7,8 @@ def db_connection():
     try:
         conn = mariadb.connect(
             user="root",
-            password="",
-            host="localhost",
+            password="root",
+            host="database-soap",
             port=3306,
             database="bank",
             autocommit=True
@@ -23,8 +23,8 @@ def initialize_db():
         
         conn = mariadb.connect(
             user="root",
-            password="",
-            host="localhost",
+            password="root",
+            host="database-soap",
             port=3306,
             database="",
             autocommit=True

@@ -13,7 +13,7 @@ import datetime
 import uuid
 import json
 
-
+db.initialize_db()
 conn, cursor = db.db_connection()
 logged_in_clients = {}
 
