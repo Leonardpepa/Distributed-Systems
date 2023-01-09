@@ -146,10 +146,10 @@ const serviceController = {
                 return res.json({balance: -1, error: "Account with that username doesn't exist"});
             }
     
-            const updatedUser = await serviceController.withdrawHelper(req.user._id, amount);
+            const {updatedUser, error} = await serviceController.withdrawHelper(req.user._id, amount);
             
-            if (!updatedUser){
-                return res.json({balance: -1, error: "An Error occurred"}); 
+            if (updatedUser == null){
+                return res.json({balance: -1, error: error}); 
             }
     
             const updatedTransfer = await updateUser(userToTransfer._id, {balance: userToTransfer.balance + amount});   
@@ -176,26 +176,26 @@ const serviceController = {
     withdrawHelper: async (id, amount) => {
         try {
             if(amount <= 0){
-                return null;
+                return {updatedUser: null, error: "Amount cannot be negative"};
             }
     
             const user = await getUserById(id);
     
             if (user && (user.limit - amount < 0)){
-                return null;
+                return {updatedUser: null, error: `Daily limit cannot be exceeded, you can only spend ${user.limit} more for today.`};
             }
     
             if (user && (user.balance - amount < 0)){
-                return null;
+                return {updatedUser: null, error: false, error: "Balance is not enough to complete the request"};
             }
     
             const updated = await updateUser(id, {balance: user.balance - amount, limit:user.limit - amount});
             
             if (!updated) {
-                return null;
+                return {updatedUser: null, error: "An error occured"};
             }
     
-            return updated
+            return {updatedUser: updated, error:  ""};
         } catch (error) {
             console.log(error);
         }
