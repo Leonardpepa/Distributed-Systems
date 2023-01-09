@@ -43,7 +43,8 @@
                         placeholder="Enter the amount to deposit" required>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="close-deposit" type="button" class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
                     <button onclick="deposit()" type="button" class="btn btn-primary">Deposit</button>
                 </div>
             </div>
@@ -66,7 +67,8 @@
                         placeholder="Enter the amount to withdraw" required>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="close-withdraw" type="button" class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
                     <button onclick="withdraw()" type="button" class="btn btn-primary">Withdraw</button>
                 </div>
             </div>
@@ -93,7 +95,8 @@
                         placeholder="Enter the username of the account to transfer" required>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button id="close-transfer" type="button" class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
                     <button onclick="transfer()" type="button" class="btn btn-primary">Transfer</button>
                 </div>
             </div>
@@ -162,6 +165,7 @@
                 await alert(`${data.error}`);
             } else {
                 await alert(`Your Balance is ${data.balance}`);
+                document.getElementById("close-deposit").click();
             }
         }
 
@@ -189,6 +193,7 @@
                 await alert(`${data.error}`);
             } else {
                 await alert(`Your Balance is ${data.balance}`);
+                document.getElementById("close-withdraw").click();
             }
         }
 
@@ -224,6 +229,7 @@
                 await alert(`${data.error}`);
             } else {
                 await alert(`You transfered ${amount} successfully, your new Balance is ${data.balance}`);
+                document.getElementById("close-transfer").click();
             }
         }
 

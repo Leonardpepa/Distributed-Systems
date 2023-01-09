@@ -24,12 +24,16 @@ const authController = {
     }
   },
   register: async (req, res, next) => {
-    const { username, password } = req.body;
-
-    if (username.length === 0 || password.length === 0){
-      return res.redirect("/register?e=Emaill or Password cannot be empty")  
+    try {
+      const { username, password } = req.body;
+  
+      if (username.length === 0 || password.length === 0){
+        return res.redirect("/register?e=Emaill or Password cannot be empty")  
+      }
+      return await createUser(req, res, username, password);
+    } catch (error) {
+      return res.redirect("/register?e=Wrong format");  
     }
-    return await createUser(req, res, username, password);
   },
   logout: async (req, res, next) => {
     req.logout((err) => {
