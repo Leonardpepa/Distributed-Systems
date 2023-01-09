@@ -88,7 +88,9 @@
                 <div class="modal-body">
                     <input class="form-control" id="transfer-amount" type="number"
                         placeholder="Enter the amount to transfer" required>
-                    <input class="form-control" type="text" id="transfer_to" required>
+                    <br>
+                    <input class="form-control" type="text" id="transfer_to"
+                        placeholder="Enter the username of the account to transfer" required>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -113,7 +115,7 @@
             <button data-toggle="modal" data-target="#depositModal" class="btn btn-success">Deposit</button>
             <button data-toggle="modal" data-target="#withdrawModal" class="btn btn-success">withdraw</button>
             <button onclick='getBalance()' class="btn btn-secondary">balance</button>
-            <button class="btn btn-secondary">transfer</button>
+            <button data-toggle="modal" data-target="#transferModal" class="btn btn-secondary">transfer</button>
             <a class="btn btn-danger" href="/logout">Logout</a>
         </div>
     </main>
@@ -191,8 +193,38 @@
         }
 
 
-        const transfer = () => {
+        const transfer = async () => {
+            const amount = Number(document.getElementById("transfer-amount").value);
 
+            const transfer_to = document.getElementById("transfer_to").value;
+
+            if (amount <= 0) {
+                await alert(`Amount cannot be zero or negative`);
+                return;
+            }
+
+            if (transfer_to.length === 0) {
+                await alert(`Username to transfer cannot be null`);
+                return;
+            }
+
+
+            const res = await fetch("/user/transfer", {
+                credentials: "include",
+                method: "post",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username: transfer_to, amount: amount }),
+            });
+
+            const data = await res.json();
+
+            if (data.error) {
+                await alert(`${data.error}`);
+            } else {
+                await alert(`You transfered ${amount} successfully, your new Balance is ${data.balance}`);
+            }
         }
 
 

@@ -59,6 +59,7 @@ app.get("/user/statements", ensureAuth, serviceController.statementInfo);
 // Authenticated routes
 app.post("/user/deposit", ensureAuth, serviceController.deposit);
 app.post("/user/withdraw", ensureAuth, serviceController.withdraw);
+app.post("/user/transfer", ensureAuth, serviceController.transfer);
 
 
 const port = process.env.PORT || 3000;
