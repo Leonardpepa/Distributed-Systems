@@ -22,5 +22,5 @@ Contains code for the Program implemented in Message Queues
 
 ## lab4
 Contains code for the Program implemented with Web Services (SOAP, REST)
-* Rest/bank restful implementation using nodejs, mongodb, passportjs
+* Restful-bank restful implementation using nodejs, mongodb, passportjs
 * SOAP/bank soap implementation using python with spyne, zeep and mariadb
