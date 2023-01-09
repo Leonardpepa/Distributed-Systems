@@ -20,7 +20,7 @@ Contains code for the Program implemented in Message Queues
 * simple kafka chat
 
 
-## lab4
+## lab5
 Contains code for the Program implemented with Web Services (SOAP, REST)
-* Restful-bank restful implementation using nodejs, mongodb, passportjs
+* Restful-Bank restful implementation using nodejs, mongodb, passportjs
 * SOAP/bank soap implementation using python with spyne, zeep and mariadb
