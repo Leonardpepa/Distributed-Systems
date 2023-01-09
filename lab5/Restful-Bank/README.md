@@ -3,7 +3,7 @@
 ## How to run
 Just type
 ```terminal
-  docker comppose up
+  docker compose up
 ```
 And the app will be live at http://localhost:3000
 
