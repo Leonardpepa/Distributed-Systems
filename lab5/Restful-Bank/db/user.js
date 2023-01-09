@@ -47,8 +47,11 @@ const getUserById = async (id) => {
   const updateUser = async (id, fieldsToUpdate) => {
     try {
       const user = await User.findOneAndUpdate({ _id: id }, { ...fieldsToUpdate });
+      if (user){
+          return await getUserById(id);
+      }
 
-      return user;
+      return null;
     } catch (error) {
       console.log(error);
     }

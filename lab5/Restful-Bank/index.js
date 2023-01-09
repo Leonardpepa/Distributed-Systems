@@ -40,24 +40,29 @@ const serviceController = require("./controllers/serviceController.js");
 
 const {ensureAuth} = require("./middleware/ensureAuth.js");
 
+
+// Router
 app.get("/", pageController.home);
 app.get("/logout", authController.logout);
 app.get("/login", pageController.login);
 app.get("/register", pageController.register);
+
+app.post("/register", authController.register);
+app.post("/login", authController.login);
+
+// Authenticated routes
 app.get("/user/balance", ensureAuth, serviceController.balance);
 app.get("/user/info", ensureAuth, serviceController.info);
 app.get("/user/statements", ensureAuth, serviceController.statementInfo);
 
-app.post("/register", authController.register);
-app.post("/login", authController.login);
+
+// Authenticated routes
 app.post("/user/deposit", ensureAuth, serviceController.deposit);
 app.post("/user/withdraw", ensureAuth, serviceController.withdraw);
-
-
 
 
 const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
-    console.log("listening on port " + port);
+    console.log(`Live at http://localhost:${port}`);
 });

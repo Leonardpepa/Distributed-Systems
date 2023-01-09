@@ -1,9 +1,12 @@
 const { getUserById, updateUser } = require("../db/user");
 const {createStatement} = require("../db/statement.js");
 const User = require("../models/user");
-
+const UpdateLimitIfNeeded = require("../middleware/checkDailyLimit.js");
 const serviceController = {
     info: async (req, res) => {
+        
+        UpdateLimitIfNeeded(req.user);
+
         const user = await getUserById(req.user._id);
 
         if (!user){
@@ -12,6 +15,8 @@ const serviceController = {
         return res.render("info", {user: user, error: ""});
     },
     statementInfo: async (req, res) => {
+        UpdateLimitIfNeeded(req.user);
+        
         const user = await getUserById(req.user._id);
 
         if (!user){
@@ -21,13 +26,18 @@ const serviceController = {
 
     },
     balance: async (req, res) => {
+        UpdateLimitIfNeeded(req.user);
+        
         const user = await getUserById(req.user._id);
+        
         if (!user) {
             return res.json({balance: -1, error: "An error occurred"});
         }
         return res.json({balance: user.balance, error: ""});
     },
     deposit: async (req, res) => {
+        UpdateLimitIfNeeded(req.user);
+        
         const amount = req.body.amount;
 
         if(amount <= 0){
@@ -50,10 +60,11 @@ const serviceController = {
                 { $push: { statements: stmt._id } }
               );
         }
-        return res.json({balance: user.balance + amount, error: ""});
+        return res.json({balance: updated.balance, error: ""});
     },
 
     withdraw: async (req, res) => {
+        UpdateLimitIfNeeded(req.user);
 
         const amount = req.body.amount;
 
@@ -72,7 +83,7 @@ const serviceController = {
         }
 
         const updated = await updateUser(req.user._id, {balance: user.balance - amount, limit:user.limit - amount});
-
+        
         if (!updated) {
             return res.json({balance: -1, error: "An error occurred"});
         }
@@ -86,7 +97,7 @@ const serviceController = {
               );
         }
 
-        return res.json({balance: user.balance - amount, error: ""});
+        return res.json({balance: updated.balance, error: ""});
     }
 
 
