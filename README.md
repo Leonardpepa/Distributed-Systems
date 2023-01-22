@@ -24,3 +24,6 @@ Contains code for the Program implemented in Message Queues
 Contains code for the Program implemented with Web Services (SOAP, REST)
 * Restful-Bank restful implementation using nodejs, mongodb, passportjs
 * SOAP/bank soap implementation using python with spyne, zeep and mariadb
+
+## lab6
+Firebase real time simple chat
