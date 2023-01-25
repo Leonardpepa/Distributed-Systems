@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  database:
+    container_name: database-rabbit
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: bank
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
+      interval: 25s
+      timeout: 25s
+      retries: 10
+      start_period: 40s
+
+  server:
+    container_name: rabbit-bank-server
+    depends_on:
+      database:
+        condition: service_healthy
+    links:
+      - database
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    expose:
+      - 8000
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: "rabbitmq"
+    ports:
+      - 5672:5672
+      - 15672:15672
