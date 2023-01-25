@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+  database:
+    container_name: database-zerorpc
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: bank
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-uroot", "-proot"]
+      interval: 25s
+      timeout: 25s
+      retries: 10
+      start_period: 40s
+
+  server:
+    container_name: zerorpc-bank-server
+    depends_on:
+      database:
+        condition: service_healthy
+    links:
+      - database
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    expose:
+      - 8000
